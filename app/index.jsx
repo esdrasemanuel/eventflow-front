@@ -1,8 +1,18 @@
-// app/index.jsx
+import { useState } from 'react';
+
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { COLORS, FONT_SIZES, SPACING } from '../constants/theme';
 
+import Button from '../components/button';
+import InputField from '../components/InputField';
 export default function LoginScreen() {
+
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleLogin = () => {
+    alert(`user: ${username}`);
+  };
 
   return (
     <KeyboardAvoidingView 
@@ -11,11 +21,40 @@ export default function LoginScreen() {
     >
       <ScrollView contentContainerStyle={styles.scrollContainer} bounces={false}>
         
-        {/* Top Half Banner Panel */}
         <View style={styles.headerBlock}>
           <Text style={styles.headerTitleMain}>Event</Text>
           <Text style={styles.headerTitleSub}>Flow</Text>
+        </View>
 
+        <View style={styles.formContainer}>
+          
+          <Text style={styles.screenLabel}>Login</Text>
+
+          <InputField 
+            label="User"
+            value={username}
+            onChangeText={setUsername}
+          />
+
+          <InputField 
+            label="Password"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry={true}
+          />
+
+          <View style={styles.buttonSpacing}>
+            <Button 
+              title="Log In"
+              color="secondary"
+              onPress={handleLogin}
+            />
+          </View>
+          
+          {/* Footer  */}
+          <View style={styles.footerBranding}>
+            <Text style={styles.brandingText}>O'CALLAGHAN COLLECTION</Text>
+          </View>
         </View>
 
       </ScrollView>
@@ -52,5 +91,33 @@ const styles = StyleSheet.create({
     color: COLORS.textDark,
     marginTop: -SPACING.lg,
     marginBottom: SPACING.xxl,
+  },
+  formContainer: {
+    flex: 1,
+    backgroundColor: COLORS.backgroundLight,
+    paddingHorizontal: SPACING.xl,
+    alignItems: 'center',
+  },
+  screenLabel: {
+    fontSize: FONT_SIZES.xl,
+    fontWeight: '700',
+    color: COLORS.primary,
+    marginBottom: SPACING.xl,
+  },
+  buttonSpacing: {
+    width: '100%',
+    marginTop: SPACING.md,
+  },
+  footerBranding: {
+    marginTop: 'auto',
+    alignItems: 'center',
+    paddingVertical: SPACING.lg,
+  },
+  brandingText: {
+    fontSize: FONT_SIZES.sm - 2,
+    fontWeight: '600',
+    color: COLORS.primary,
+    letterSpacing: 1,
+    textAlign: 'center',
   },
 });
