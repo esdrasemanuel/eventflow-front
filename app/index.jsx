@@ -2,8 +2,8 @@ import { useState } from 'react';
 
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { COLORS, FONT_SIZES, SPACING } from '../constants/theme';
-
-import Button from '../components/button';
+import { router } from 'expo-router';
+import Button from '../components/Button';
 import InputField from '../components/InputField';
 export default function LoginScreen() {
 
@@ -11,7 +11,7 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
 
   const handleLogin = () => {
-    alert(`user: ${username}`);
+    router.replace('/home');
   };
 
   return (
