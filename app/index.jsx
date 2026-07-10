@@ -1,17 +1,39 @@
-import { useState } from 'react';
-
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View, Alert } from 'react-native';
 import { COLORS, FONT_SIZES, SPACING } from '../constants/theme';
 import { router } from 'expo-router';
 import Button from '../components/Button';
 import InputField from '../components/InputField';
+import { loginService } from '../services/auth'; // Importing the API authentication service
 export default function LoginScreen() {
 
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false); // UI state to manage loading feedback indicators
+  const handleLogin = async () => {
+    // Basic structural validation before executing network requests
+    if (!email || !password) {
+      Alert.alert('Error', 'Please fill in all fields');
+      return;
+    }
 
-  const handleLogin = () => {
-    router.replace('/home');
+    setLoading(true); // Disable input elements and trigger loading state
+    try {
+      // Execute network transaction with backend database service
+      const userData = await loginService(email, password);
+      
+      console.log('Login successful:', userData);
+
+      // Route layout view to home dashboard without appending login to view stack history
+      router.replace('/home');
+    } catch (error) {
+      console.log('--- DEBUG LOGIN ERROR ---');
+  console.log('Error Message:', error.message);
+      // Present rejection message returned by API to user
+      Alert.alert('Login Failed', error.message);
+    } finally {
+      setLoading(false); // Restore UI components to interactive state
+    }
   };
 
   return (
@@ -31,9 +53,10 @@ export default function LoginScreen() {
           <Text style={styles.screenLabel}>Login</Text>
 
           <InputField 
-            label="User"
-            value={username}
-            onChangeText={setUsername}
+            label="Email"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address" 
           />
 
           <InputField 
@@ -45,9 +68,10 @@ export default function LoginScreen() {
 
           <View style={styles.buttonSpacing}>
             <Button 
-              title="Log In"
+              title={loading ? "Connecting..." : "Log In"} // Adaptive text feedback
               color="secondary"
               onPress={handleLogin}
+              disabled={loading} // Prevents 
             />
           </View>
           
