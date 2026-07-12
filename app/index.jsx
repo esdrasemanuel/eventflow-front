@@ -27,8 +27,6 @@ export default function LoginScreen() {
       // Route layout view to home dashboard without appending login to view stack history
       router.replace('/home');
     } catch (error) {
-      console.log('--- DEBUG LOGIN ERROR ---');
-  console.log('Error Message:', error.message);
       // Present rejection message returned by API to user
       Alert.alert('Login Failed', error.message);
     } finally {
