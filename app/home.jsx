@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity } from 'react-native';
 import SidebarMenu from '../components/SidebarMenu';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function HomeScreen() {
   // State to manage the open and close visibility of the sidebar menu
   const [menuVisible, setMenuVisible] = useState(false);
   const [currentDate, setCurrentDate] = useState('');
+  const [userName, setUserName] = useState('User'); // Default fallback name
+  const [userRole, setUserRole] = useState('');     // Stores user role permissions
 
   useEffect(() => {
     generateCurrentDate();
+    loadUserData();
   }, []);
 
   const generateCurrentDate = () => {
@@ -18,6 +21,24 @@ export default function HomeScreen() {
       const formattedDate = new Intl.DateTimeFormat('en-US', options).format(today);
       setCurrentDate(formattedDate);
     };
+
+  const loadUserData = async () => {
+    try {
+      // Reading the raw string data from AsyncStorage
+      const storedUser = await AsyncStorage.getItem('@EventFlow:user');
+      
+      if (storedUser) {
+        // Parsing the string back into a JavaScript object
+        const parsedUser = JSON.parse(storedUser);
+        
+        // Setting state values with the logged-in user details
+        setUserName(parsedUser.firstName || 'User');
+        setUserRole(parsedUser.role || '');
+      }
+    } catch (error) {
+      console.error('Failed to load user data from storage:', error);
+    }
+  };
   return (
     <SafeAreaView style={styles.safeContainer}>
       
@@ -37,7 +58,7 @@ export default function HomeScreen() {
               </TouchableOpacity>
 
               <View style={styles.greetingTextContainer}>
-                <Text style={styles.greetingText}>Hi, David 👋</Text>
+                <Text style={styles.greetingText}>Hi, {userName} 👋</Text>
                 <Text style={styles.dateText}>{currentDate}</Text>
               </View>
             </View>

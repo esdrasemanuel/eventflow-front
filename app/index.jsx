@@ -5,6 +5,8 @@ import { router } from 'expo-router';
 import Button from '../components/Button';
 import InputField from '../components/InputField';
 import { loginService } from '../services/auth'; // Importing the API authentication service
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 export default function LoginScreen() {
 
   const [email, setEmail] = useState('');
@@ -24,7 +26,10 @@ export default function LoginScreen() {
       
       console.log('Login successful:', userData);
 
-      // Route layout view to home dashboard without appending login to view stack history
+      // Save the entire user object (contains firstName, role, email, ....)
+      await AsyncStorage.setItem('@EventFlow:user', JSON.stringify(userData.user));
+
+      // Navigate to home
       router.replace('/home');
     } catch (error) {
       // Present rejection message returned by API to user
