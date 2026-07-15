@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity } from 'react-native';
 import SidebarMenu from '../components/SidebarMenu';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import SummaryCard from '../components/SummaryCard';
 export default function HomeScreen() {
   // State to manage the open and close visibility of the sidebar menu
   const [menuVisible, setMenuVisible] = useState(false);
@@ -68,9 +69,15 @@ export default function HomeScreen() {
           <Text style={styles.sectionTitleHeader}>Today's overview</Text>
           
           {/* Summary horizontal area wrapper */}
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.summaryScroll}>
-            {/* Summary cards will be placed here in the next step */}
-            <View><Text>Cards HERE</Text></View>
+          <ScrollView 
+            horizontal 
+            showsHorizontalScrollIndicator={false} 
+            contentContainerStyle={styles.summaryScroll}
+          >
+            <SummaryCard value="3" label="Events Today" valueColor="#2979FF" />
+            <SummaryCard value="2" label="In Progress" valueColor="#00E676" />
+            <SummaryCard value="18" label="Tasks" valueColor="#3C4043" />
+            <SummaryCard value="1" label="Drink Reception" valueColor="#FF1744" />
           </ScrollView>
         </View>
 
