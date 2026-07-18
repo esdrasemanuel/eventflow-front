@@ -4,7 +4,7 @@ const API_URL = process.env.EXPO_PUBLIC_API_URL;
 export async function getEvents() {
   const response = await fetch(`${API_URL}/api/events/events_list`);
   const events = await response.json();
-  events.sort((a, b) => a.start_time.localeCompare(b.start_time));//Order events by start_time
+  events.events.sort((a, b) => a.start_time.localeCompare(b.start_time));//Order events by start_time
   
   return events;
 }

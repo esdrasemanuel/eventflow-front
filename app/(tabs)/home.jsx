@@ -18,7 +18,12 @@ export default function HomeScreen() {
   const [events, setEvents] = useState([]);
   const [filterStatus, setFilterStatus] = useState('all'); // 'all' | 'upcoming' | 'past' | 'today'
   const [showFilterModal, setShowFilterModal] = useState(false);
-  
+  const [overview, setOverview] = useState({
+    eventsToday: 0,
+    inProgress: 0,
+    tasks: 0,
+    drinkReception: 0
+  });
   useEffect(() => {
     generateCurrentDate();
     loadUserData();
@@ -59,7 +64,8 @@ export default function HomeScreen() {
     const loadEvents = async () =>  {
       try {
         const data = await getEvents();
-        setEvents(data);        
+        setEvents(data.events);
+        setOverview(data.overview);        
       } catch (error) {
         console.error('Failed to load events:', error);
       }
@@ -100,10 +106,10 @@ export default function HomeScreen() {
           
           {/* Summary horizontal area wrapper */}
           <View style={styles.cardsSummary}>
-            <SummaryCard value="3" label="Events Today" valueColor="#2979FF" />
-            <SummaryCard value="2" label="In Progress" valueColor="#00E676" />
-            <SummaryCard value="18" label="Tasks" valueColor="#3C4043" />
-            <SummaryCard value="1" label="Drink Reception" valueColor="#FF1744" />
+            <SummaryCard value={overview.eventsToday} label="Events Today" valueColor="#2979FF" />
+            <SummaryCard value={overview.inProgress} label="In Progress" valueColor="#00E676" />
+            <SummaryCard value={overview.tasks} label="Tasks" valueColor="#3C4043" />
+            <SummaryCard value={overview.drinkReception} label="Drink Reception" valueColor="#FF1744" />
           </View>
         </View>
 
