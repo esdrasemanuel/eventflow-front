@@ -129,7 +129,18 @@ export default function HomeScreen() {
               </View>
             ) : (
               filteredEvents.map((event) => (
-                <EventCard key={event.id} event={event} />
+                <TouchableOpacity
+                  key={event.id} // A key deve ficar aqui no elemento de fora
+                  onPress={() => router.push({
+                    pathname: '/eventsDetails',
+                    params: { 
+                      id: event.id, 
+                      eventData: JSON.stringify(event)
+                    }
+                  })}
+                >
+                  <EventCard key={event.id} event={event} />
+                </TouchableOpacity>
               ))
           )}
 

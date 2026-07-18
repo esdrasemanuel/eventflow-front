@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: FONT_SIZES.lg,
     fontWeight: '700',
-    color: 'COLORS.primary',
+    color: COLORS.primary,
     marginBottom: 12,
   },
   modalOption: {
@@ -75,11 +75,11 @@ const styles = StyleSheet.create({
   },
   modalOptionText: {
     fontSize: FONT_SIZES.md,
-    color: 'COLORS.primary',
+    color: COLORS.primary,
   },
   modalOptionActive: {
     fontSize: FONT_SIZES.md,
-    color: 'COLORS.secondary',
+    color: COLORS.secondary,
     fontWeight: '700',
   },
 });
