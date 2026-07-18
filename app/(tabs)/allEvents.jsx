@@ -96,7 +96,18 @@ export default function AllEventsScreen() {
             <View key={section.date} style={styles.section}>
               <Text style={styles.sectionDateTitle}>{section.title}</Text>
               {section.data.map((event) => (
+                <TouchableOpacity
+                    key={event.id} 
+                    onPress={() => router.push({
+                    pathname: '/eventsDetails',
+                    params: { 
+                        id: event.id, 
+                        eventData: JSON.stringify(event),
+                        backTo: 'allEvents'
+                        }
+                    })}>
                 <EventCard key={event.id} event={event} />
+                </TouchableOpacity>
               ))}
             </View>
           ))

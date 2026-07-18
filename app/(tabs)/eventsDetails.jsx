@@ -4,7 +4,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import EventTabs from '../../components/EventTabs';
 export default function DetailsEventsScreen() {
   const params = useLocalSearchParams();
-  const { id, eventData } = params;
+  const { id, eventData, backTo } = params;
   const event = params.eventData ? JSON.parse(params.eventData) : null;
 const [activeTab, setActiveTab] = useState('Timeline');
   const renderTabContent = () => {
@@ -31,7 +31,7 @@ const [activeTab, setActiveTab] = useState('Timeline');
     <SafeAreaView style={styles.safeContainer}>
       {/* Header with back button and screen title */}
       <View style={styles.headerRow}>
-        <TouchableOpacity onPress={() => router.replace('/home')} activeOpacity={0.7}>
+        <TouchableOpacity onPress={() => backTo === `allEvents` ? router.replace('/allEvents') : router.replace('/home')} activeOpacity={0.7}>
           <Text style={styles.backIcon}>←</Text>
         </TouchableOpacity>
           <View style={styles.metaHeader}>
