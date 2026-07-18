@@ -1,19 +1,34 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity } from 'react-native';
-import SidebarMenu from '../components/SidebarMenu';
+import SidebarMenu from '../../components/SidebarMenu';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import SummaryCard from '../components/SummaryCard';
+import SummaryCard from '../../components/SummaryCard';
+import { getEvents } from '../../services/ServiceEvents';
+import { getEventStatus } from '../../utils/eventStatus';
+import FilterModal from '../../components/FilterModal';
+import EventCard from '../../components/EventCard';
+import { router } from 'expo-router';
+
 export default function HomeScreen() {
   // State to manage the open and close visibility of the sidebar menu
   const [menuVisible, setMenuVisible] = useState(false);
   const [currentDate, setCurrentDate] = useState('');
   const [userName, setUserName] = useState('User'); // Default fallback name
   const [userRole, setUserRole] = useState('');     // Stores user role permissions
-
+  const [events, setEvents] = useState([]);
+  const [filterStatus, setFilterStatus] = useState('all'); // 'all' | 'upcoming' | 'past' | 'today'
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  
   useEffect(() => {
     generateCurrentDate();
     loadUserData();
+    loadEvents();
   }, []);
+
+  const filteredEvents = useMemo(() => {
+    if (filterStatus === 'all') return events;
+    return events.filter((event) => getEventStatus(event).value === filterStatus);
+  }, [events, filterStatus]);
 
   const generateCurrentDate = () => {
       // Formats the live date dynamically 
@@ -40,12 +55,27 @@ export default function HomeScreen() {
       console.error('Failed to load user data from storage:', error);
     }
   };
+
+    const loadEvents = async () =>  {
+      try {
+        const data = await getEvents();
+        setEvents(data);        
+      } catch (error) {
+        console.error('Failed to load events:', error);
+      }
+  }
+
   return (
     <SafeAreaView style={styles.safeContainer}>
       
       {/* Sidebar overlay component loaded and controled via state */}
       <SidebarMenu visible={menuVisible} onClose={() => setMenuVisible(false)} />
-
+      <FilterModal
+        visible={showFilterModal}
+        selectedFilter={filterStatus}
+        onSelect={(value) => setFilterStatus(value)}
+        onClose={() => setShowFilterModal(false)}
+      />
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
         
         {/* Pink Header Block */}
@@ -69,31 +99,38 @@ export default function HomeScreen() {
           <Text style={styles.sectionTitleHeader}>Today's overview</Text>
           
           {/* Summary horizontal area wrapper */}
-          <ScrollView 
-            horizontal 
-            showsHorizontalScrollIndicator={false} 
-            contentContainerStyle={styles.summaryScroll}
-          >
+          <View style={styles.cardsSummary}>
             <SummaryCard value="3" label="Events Today" valueColor="#2979FF" />
             <SummaryCard value="2" label="In Progress" valueColor="#00E676" />
             <SummaryCard value="18" label="Tasks" valueColor="#3C4043" />
             <SummaryCard value="1" label="Drink Reception" valueColor="#FF1744" />
-          </ScrollView>
+          </View>
         </View>
 
         {/* Section Today's Events will be placed here */}
         <View style={styles.listingSection}>
           <View style={styles.listingHeaderRow}>
             <Text style={styles.sectionTitleBody}>Today's events</Text>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => setShowFilterModal(true)}>
               <Text>⚙ Filter</Text>
             </TouchableOpacity>
           </View>
 
           {/* Event items listing cards will be here */}
-          <View style={styles.placeholderListCard}>
-            <Text>Events Listed HERE</Text>
-          </View>
+          {filteredEvents.length === 0 ? (
+              <View style={styles.placeholderListCard}>
+                <Text>No Events today</Text>
+              </View>
+            ) : (
+              filteredEvents.map((event) => (
+                <EventCard key={event.id} event={event} />
+              ))
+          )}
+
+          {/* View all button */}
+          <TouchableOpacity style={styles.textContainer} onPress={() => router.push('/allEvents')}>
+            <Text style={styles.linkText}>View all→</Text>
+          </TouchableOpacity>
         </View>
 
       </ScrollView>
@@ -156,9 +193,6 @@ const styles = StyleSheet.create({
     color: '#382109',
     marginBottom: 16,
   },
-  summaryScroll: {
-    paddingRight: 24,
-  },
   listingSection: {
     flex: 1,
     paddingHorizontal: 24,
@@ -185,4 +219,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#BCC1C6',
   },
+  cardsSummary:{
+    flexDirection: 'row',
+  }
 });

@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     padding: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 14,
+    marginRight: 5,
     // Smooth cross-platform shadow
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
