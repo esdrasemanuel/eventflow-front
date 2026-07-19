@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity } from 'react-native';
 import SidebarMenu from '../../components/SidebarMenu';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -7,33 +7,32 @@ import { getEvents } from '../../services/ServiceEvents';
 import { getEventStatus } from '../../utils/eventStatus';
 import FilterModal from '../../components/FilterModal';
 import EventCard from '../../components/EventCard';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router'; // Importado useFocusEffect
 
 export default function HomeScreen() {
   // State to manage the open and close visibility of the sidebar menu
   const [menuVisible, setMenuVisible] = useState(false);
   const [currentDate, setCurrentDate] = useState('');
-  const [userName, setUserName] = useState('User'); // Default fallback name
-  const [userRole, setUserRole] = useState('');     // Stores user role permissions
+  const [userName, setUserName] = useState('User');
+  const [userRole, setUserRole] = useState('');    
   const [events, setEvents] = useState([]);
-  const [filterStatus, setFilterStatus] = useState('all'); // 'all' | 'upcoming' | 'past' | 'today'
+  const [filterStatus, setFilterStatus] = useState('all');
   const [showFilterModal, setShowFilterModal] = useState(false);
-  const [overview, setOverview] = useState({
+  const [rawOverview, setRawOverview] = useState({
     eventsToday: 0,
     inProgress: 0,
     tasks: 0,
     drinkReception: 0
   });
-  useEffect(() => {
-    generateCurrentDate();
-    loadUserData();
-    loadEvents();
-  }, []);
 
-  const filteredEvents = useMemo(() => {
-    if (filterStatus === 'all') return events;
-    return events.filter((event) => getEventStatus(event).value === filterStatus);
-  }, [events, filterStatus]);
+  // update always when user back to the home
+  useFocusEffect(
+    useCallback(() => {
+      generateCurrentDate();
+      loadUserData();
+      loadEvents();
+    }, [])
+  );
 
   const generateCurrentDate = () => {
       // Formats the live date dynamically 
@@ -61,15 +60,50 @@ export default function HomeScreen() {
     }
   };
 
-    const loadEvents = async () =>  {
+  const loadEvents = async () =>  {
+    try {
+      const data = await getEvents();
+      setEvents(data.events || []);
+      setRawOverview(data.overview || { eventsToday: 0, inProgress: 0, tasks: 0, drinkReception: 0 });        
+    } catch (error) {
+      console.error('Failed to load events:', error);
+    }
+  };
+
+  // filter
+  const filteredEvents = useMemo(() => {
+    if (filterStatus === 'all') return events;
+    return events.filter((event) => getEventStatus(event).value === filterStatus);
+  }, [events, filterStatus]);
+
+  // overview dinamic 
+  const overview = useMemo(() => {
+    const now = new Date();
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+    // based on the time
+    const currentInProgressCount = events.filter(event => {
       try {
-        const data = await getEvents();
-        setEvents(data.events);
-        setOverview(data.overview);        
-      } catch (error) {
-        console.error('Failed to load events:', error);
+        if (!event.start_time || !event.end_time) return false;
+        
+        const [startH, startM] = event.start_time.split(':').map(Number);
+        const [endH, endM] = event.end_time.split(':').map(Number);
+        
+        const startMinutes = startH * 60 + startM;
+        const endMinutes = endH * 60 + endM;
+        
+        return currentMinutes >= startMinutes && currentMinutes <= endMinutes;
+      } catch (e) {
+        return false;
       }
-  }
+    }).length;
+
+    return {
+      ...rawOverview,
+      eventsToday: events.length, 
+      inProgress: currentInProgressCount 
+    };
+  }, [events, rawOverview]);
 
   return (
     <SafeAreaView style={styles.safeContainer}>
@@ -84,6 +118,7 @@ export default function HomeScreen() {
       />
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
         
+        {/* Pink Header Block */}
         <View style={styles.headerBackground}>
           <View style={styles.headerRow}>
             <View style={styles.menuAndGreeting}>
@@ -123,24 +158,24 @@ export default function HomeScreen() {
 
           {/* Event items listing cards will be here */}
           {filteredEvents.length === 0 ? (
-              <View style={styles.placeholderListCard}>
-                <Text>No Events today</Text>
-              </View>
-            ) : (
-              filteredEvents.map((event) => (
-                <TouchableOpacity
-                  key={event.id} // A key deve ficar aqui no elemento de fora
-                  onPress={() => router.push({
-                    pathname: '/eventsDetails',
-                    params: { 
-                      id: event.id, 
-                      eventData: JSON.stringify(event)
-                    }
-                  })}
-                >
-                  <EventCard key={event.id} event={event} />
-                </TouchableOpacity>
-              ))
+            <View style={styles.placeholderListCard}>
+              <Text>No Events today</Text>
+            </View>
+          ) : (
+            filteredEvents.map((event) => (
+              <TouchableOpacity
+                key={event.id}
+                onPress={() => router.push({
+                  pathname: '/eventsDetails',
+                  params: { 
+                    id: event.id, 
+                    eventData: JSON.stringify(event)
+                  }
+                })}
+              >
+                <EventCard event={event} />
+              </TouchableOpacity>
+            ))
           )}
 
           {/* View all button */}
@@ -155,13 +190,8 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  safeContainer: {
-    flex: 1,
-    backgroundColor: '#F8F9FA',
-  },
-  scrollContainer: {
-    flexGrow: 1,
-  },
+  safeContainer: { flex: 1, backgroundColor: '#F8F9FA' },
+  scrollContainer: { flexGrow: 1 },
   headerBackground: {
     backgroundColor: '#FFCDD2',
     paddingHorizontal: 24,
@@ -170,72 +200,18 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
   },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-  menuAndGreeting: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  menuIcon: {
-    fontSize: 36,
-    fontWeight: 'bold',
-    color: '#382109',
-    marginRight: 20,
-    paddingVertical: 6,
-    paddingHorizontal: 4,
-    lineHeight: 36,
-  },
-  greetingTextContainer: {
-    justifyContent: 'center',
-  },
-  greetingText: {
-    fontSize: 22,
-    fontWeight: '800',
-    color: '#382109',
-  },
-  dateText: {
-    fontSize: 14,
-    color: '#757575',
-    fontWeight: '500',
-    marginTop: 2,
-  },
-  sectionTitleHeader: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#382109',
-    marginBottom: 16,
-  },
-  listingSection: {
-    flex: 1,
-    paddingHorizontal: 24,
-    paddingTop: 24,
-  },
-  listingHeaderRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  sectionTitleBody: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#382109',
-  },
-  placeholderListCard: {
-    height: 120,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderStyle: 'dashed',
-    borderWidth: 1,
-    borderColor: '#BCC1C6',
-  },
-  cardsSummary:{
-    flexDirection: 'row',
-  }
+  headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 },
+  menuAndGreeting: { flexDirection: 'row', alignItems: 'center' },
+  menuIcon: { fontSize: 36, fontWeight: 'bold', color: '#382109', marginRight: 20, paddingVertical: 6, paddingHorizontal: 4, lineHeight: 36 },
+  greetingTextContainer: { justifyContent: 'center' },
+  greetingText: { fontSize: 22, fontWeight: '800', color: '#382109' },
+  dateText: { fontSize: 14, color: '#757575', fontWeight: '500', marginTop: 2 },
+  sectionTitleHeader: { fontSize: 16, fontWeight: '700', color: '#382109', marginBottom: 16 },
+  listingSection: { flex: 1, paddingHorizontal: 24, paddingTop: 24 },
+  listingHeaderRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
+  sectionTitleBody: { fontSize: 18, fontWeight: '700', color: '#382109' },
+  placeholderListCard: { height: 120, backgroundColor: '#FFFFFF', borderRadius: 12, justifyContent: 'center', alignItems: 'center', borderStyle: 'dashed', borderWidth: 1, borderColor: '#BCC1C6' },
+  cardsSummary: { flexDirection: 'row' },
+  textContainer: { marginTop: 15, alignment: 'center' },
+  linkText: { color: '#2979FF', fontWeight: '600' }
 });
