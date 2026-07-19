@@ -84,7 +84,6 @@ export default function HomeScreen() {
       />
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
         
-        {/* Pink Header Block */}
         <View style={styles.headerBackground}>
           <View style={styles.headerRow}>
             <View style={styles.menuAndGreeting}>
