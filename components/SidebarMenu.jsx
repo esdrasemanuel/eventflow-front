@@ -1,7 +1,41 @@
 import React from 'react';
-import { View, Text, StyleSheet, Modal, TouchableOpacity, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, Modal, TouchableOpacity, SafeAreaView, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { router } from 'expo-router';
 
 export default function SidebarMenu({ visible, onClose }) {
+  
+  const handleLogout = () => {
+    Alert.alert(
+      'Logout',
+      'Are you sure you want to leave?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Leave',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              // close sidebar
+              onClose();
+
+              // clean section
+              await AsyncStorage.removeItem('userId'); // ou await AsyncStorage.clear(); para limpar tudo
+
+              // redirect user to login 
+              router.replace('/'); 
+            } catch (error) {
+              console.error('Erro ao fazer logout:', error);
+            }
+          },
+        },
+      ]
+    );
+  };
+  
   return (
     <Modal
       animationType="fade" // for Smooths the dark backdrop entry
@@ -45,7 +79,7 @@ export default function SidebarMenu({ visible, onClose }) {
 
             {/* Sidebar Footer for logout */}
             <View style={styles.footer}>
-              <TouchableOpacity style={styles.logoutButton} onPress={onClose}>
+              <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
                 <Text style={styles.logoutText}>🚪 Logout</Text>
               </TouchableOpacity>
             </View>
