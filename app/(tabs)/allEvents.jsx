@@ -4,7 +4,7 @@ import EventCard from '../../components/EventCard';
 import FilterModal from '../../components/FilterModal';
 import { filterAndGroupEvents, formatDateTitle } from '../../utils/eventFilters';
 import { getAllEvents } from '../../services/ServiceEvents';
-import { router } from 'expo-router';
+import { router, useGlobalSearchParams  } from 'expo-router';
 
 export default function AllEventsScreen() {
   // State to manage the list of events fetched from the API
@@ -14,14 +14,16 @@ export default function AllEventsScreen() {
   const [groupedEvents, setGroupedEvents] = useState([]);
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [filterStatus, setFilterStatus] = useState('all');
-
+  const params = useGlobalSearchParams ();
+  const { userId } = params;
+  
   useEffect(() => {
     loadEvents();
   }, []);
 
   useEffect(() => {
     setGroupedEvents(filterAndGroupEvents(events, searchQuery, selectedFilter, filterStatus));
-  }, [events, searchQuery, selectedFilter, filterStatus]);
+  }, [events, searchQuery, selectedFilter, filterStatus]);;
 
   async function loadEvents() {
     try {
@@ -99,11 +101,12 @@ export default function AllEventsScreen() {
                 <TouchableOpacity
                     key={event.id} 
                     onPress={() => router.push({
-                    pathname: '/eventsDetails',
+                    pathname: '/activitiesDetailsTabs',
                     params: { 
                         id: event.id, 
                         eventData: JSON.stringify(event),
-                        backTo: 'allEvents'
+                        backTo: 'allEvents',
+                        userId: userId
                         }
                     })}>
                 <EventCard key={event.id} event={event} />

@@ -14,7 +14,9 @@ export default function HomeScreen() {
   const [menuVisible, setMenuVisible] = useState(false);
   const [currentDate, setCurrentDate] = useState('');
   const [userName, setUserName] = useState('User');
-  const [userRole, setUserRole] = useState('');    
+  const [userRole, setUserRole] = useState('');
+  const [userId, setUserId] = useState('');    
+    
   const [events, setEvents] = useState([]);
   const [filterStatus, setFilterStatus] = useState('all');
   const [showFilterModal, setShowFilterModal] = useState(false);
@@ -54,6 +56,7 @@ export default function HomeScreen() {
         // Setting state values with the logged-in user details
         setUserName(parsedUser.firstName || 'User');
         setUserRole(parsedUser.role || '');
+        setUserId(parsedUser.id);
       }
     } catch (error) {
       console.error('Failed to load user data from storage:', error);
@@ -166,10 +169,11 @@ export default function HomeScreen() {
               <TouchableOpacity
                 key={event.id}
                 onPress={() => router.push({
-                  pathname: '/eventsDetails',
+                  pathname: '/activitiesDetailsTabs',
                   params: { 
                     id: event.id, 
-                    eventData: JSON.stringify(event)
+                    eventData: JSON.stringify(event),
+                    userId: userId
                   }
                 })}
               >
@@ -179,7 +183,14 @@ export default function HomeScreen() {
           )}
 
           {/* View all button */}
-          <TouchableOpacity style={styles.textContainer} onPress={() => router.push('/allEvents')}>
+          <TouchableOpacity style={styles.textContainer}
+                onPress={() => router.push({
+                  pathname: '/allEvents',
+                  params: { 
+                    userId: userId
+                  }
+                })} 
+          >
             <Text style={styles.linkText}>View all→</Text>
           </TouchableOpacity>
         </View>
