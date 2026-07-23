@@ -63,7 +63,7 @@ export default function TimelineTab({ event }) {
     });
   }
 
-  // 4. creating the icons for each activitie
+  // creating the icons for each activitie
   const getActivityIcon = (activity) => {
     if (activity.isEventEndNode) return '✓';
 
@@ -83,14 +83,20 @@ export default function TimelineTab({ event }) {
     }
 
     try {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
+      const now = new Date();
 
       const eventDateStr = event?.event_date || event?.date;
 
       if (eventDateStr) {
-        const eventDate = new Date(eventDateStr);
-        eventDate.setHours(0, 0, 0, 0);
+        const dateParts = eventDateStr.split('T')[0].split('-');
+        const eventDate = new Date(
+          Number(dateParts[0]),
+          Number(dateParts[1]) - 1,
+          Number(dateParts[2])
+        );
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
 
         if (eventDate > today) {
           return { text: 'upcoming', circle: '#f39c12', badgeBg: '#fef5e7', badgeText: '#f39c12' };
@@ -101,7 +107,6 @@ export default function TimelineTab({ event }) {
         }
       }
 
-      const now = new Date();
       const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
       if (activity.time_range && activity.time_range.includes(' - ')) {
@@ -119,9 +124,18 @@ export default function TimelineTab({ event }) {
         if (currentMinutes >= startMinutes && currentMinutes <= endMinutes) {
           return { text: 'in progress', circle: '#3498db', badgeBg: '#eaf2f8', badgeText: '#3498db' };
         }
+      } 
+      // change the end node status too
+      else if (activity.time_range && activity.time_range.includes(':')) {
+        const [endH, endM] = activity.time_range.split(':').map(Number);
+        const endMinutes = (endH || 0) * 60 + (endM || 0);
+
+        if (currentMinutes >= endMinutes) {
+          return { text: 'completed', circle: '#2ecc71', badgeBg: '#e8f8f0', badgeText: '#2ecc71' };
+        }
       }
     } catch (e) {
-      // Fallback 
+      console.error('Error calculating activity status:', e);
     }
 
     return { text: 'upcoming', circle: '#f39c12', badgeBg: '#fef5e7', badgeText: '#f39c12' };
