@@ -23,12 +23,12 @@ export default function SidebarMenu({ visible, onClose }) {
               onClose();
 
               // clean section
-              await AsyncStorage.removeItem('userId'); // ou await AsyncStorage.clear(); para limpar tudo
+              await AsyncStorage.clear() 
 
               // redirect user to login 
               router.replace('/'); 
             } catch (error) {
-              console.error('Erro ao fazer logout:', error);
+              console.error('logout error:', error);
             }
           },
         },
@@ -70,6 +70,14 @@ export default function SidebarMenu({ visible, onClose }) {
 
               <TouchableOpacity style={styles.menuItem} onPress={onClose}>
                 <Text style={styles.menuItemText}>💬 Messages</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.menuItem}
+                onPress={() => router.push({
+                  pathname: '(tabs)/addEvents'
+                  })} 
+              >
+                <Text style={styles.menuItemText}>📝 Add Events</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.menuItem} onPress={onClose}>
