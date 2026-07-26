@@ -21,7 +21,7 @@ export default function Button({ title, onPress, variant = 'filled', color = 'pr
     <TouchableOpacity 
       style={buttonStyle} 
       onPress={onPress}
-      activeOpacity={0.7}
+      activeOpacity={0.7}                        
     >
       <Text style={textStyle}>{title}</Text>
     </TouchableOpacity>

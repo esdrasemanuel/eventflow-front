@@ -7,7 +7,7 @@ import { getEvents } from '../../services/ServiceEvents';
 import { getEventStatus } from '../../utils/eventStatus';
 import FilterModal from '../../components/FilterModal';
 import EventCard from '../../components/EventCard';
-import { router, useFocusEffect } from 'expo-router'; // Importado useFocusEffect
+import { router, useFocusEffect } from 'expo-router';
 
 export default function HomeScreen() {
   // State to manage the open and close visibility of the sidebar menu

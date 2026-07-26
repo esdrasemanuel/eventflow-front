@@ -1,9 +1,11 @@
 import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
+import { router } from 'expo-router';
 
-export default function FnBTab({ event }) {
+export default function FnBTab({ event, userId }) {
   // set activities in arrays
   const activities = Array.isArray(event?.activities) ? event.activities : [];
+  const eventId = event.id;
 
   const fnbItems = useMemo(() => {
     const rawItems = [];
@@ -147,7 +149,17 @@ export default function FnBTab({ event }) {
                       ) : null}
                     </View>
 
-                    <TouchableOpacity style={styles.trackButton} activeOpacity={0.8}>
+                    <TouchableOpacity style={styles.trackButton} activeOpacity={0.8}
+                                    onPress={() => router.push({
+                                      pathname: '/drinkTrack',
+                                      params: { 
+                                       eventId: eventId,
+                                       item: JSON.stringify(item),
+                                       event: JSON.stringify(event),
+                                       userId: userId
+                                      }
+                                    })} 
+                    >
                       <Text style={styles.trackButtonText}>Track Service +</Text>
                     </TouchableOpacity>
                   </View>
