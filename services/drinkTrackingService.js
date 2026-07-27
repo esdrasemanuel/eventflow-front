@@ -38,3 +38,47 @@ export async function getBeveragesCatalog() {
   }
   return await response.json();
 }
+
+export const updateTrackedItem = async (eventId, beverageId,userId, quantity) => {
+  try {
+    const response = await fetch(`${API_URL}/api/drinkTracking/${eventId}/beverageItem/${beverageId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        quantity,
+        userId
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Update error.');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error in updateTrackedItem:', error);
+    throw error;
+  }
+};
+
+export const deleteTrackedItem = async (eventId, beverageId) => {
+  try {
+    const response = await fetch(`${API_URL}/api/drinkTracking/${eventId}/beverageItem/${beverageId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Delete Error.',response );
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error in deleteTrackedItem:', error);
+    throw error;
+  }
+};

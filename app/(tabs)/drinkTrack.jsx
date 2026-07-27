@@ -16,6 +16,10 @@ import { getTrackedItemsByEvent } from '../../services/drinkTrackingService';
 import AddItemModal from '../../components/AddDrinkModal'; // Importe o Modal aqui
 import { COLORS } from '../../constants/theme';
 
+// edit and delete imposrts
+import EditDeleteDrinkModal from '../../components/EditDeleteDrinkModal';
+import { updateTrackedItem, deleteTrackedItem } from '../../services/drinkTrackingService';
+
 export default function DrinkTrackingScreen() {
   const params = useGlobalSearchParams();
   const eventId = params.eventId;
@@ -32,6 +36,27 @@ export default function DrinkTrackingScreen() {
   const [trackedItems, setTrackedItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
+
+  // open modal edit/delete
+  const handleItemPress = (item) => {
+    setSelectedItem(item);
+    setIsDetailModalVisible(true);
+  };
+
+  // update qty 
+  const handleUpdateQuantity = async (eventId, item, userId, newQuantity) => {
+    await updateTrackedItem(eventId, item.id, userId, newQuantity);
+    loadTrackingData();
+  };
+
+  // delete item
+  const handleDeleteItem = async (eventId, item) => {
+    await deleteTrackedItem(eventId, item.id);
+    loadTrackingData();
+  };
 
   // to get the added items
   const loadTrackingData = useCallback(async () => {
@@ -184,21 +209,27 @@ export default function DrinkTrackingScreen() {
           </View>
         ) : (
           trackedItems.map((item) => (
-            <View key={item.id} style={styles.tableRow}>
-              <View style={[styles.itemDetail, { flex: 2 }]}>
-                <Image source={{ uri: item.image }} style={styles.itemImage} />
-                <Text style={styles.itemName}>{item.name}</Text>
+            <TouchableOpacity
+              key={item.id}
+              activeOpacity={0.7}
+              onPress={() => handleItemPress(item)}
+            >
+              <View key={item.id} style={styles.tableRow}>
+                <View style={[styles.itemDetail, { flex: 2 }]}>
+                  <Image source={{ uri: item.image }} style={styles.itemImage} />
+                  <Text style={styles.itemName}>{item.name}</Text>
+                </View>
+                <Text style={[styles.tableCell, styles.textCenter, { flex: 1 }]}>
+                  {item.qty}
+                </Text>
+                <Text style={[styles.tableCell, styles.textCenter, { flex: 1 }]}>
+                  € {item.unitPrice.toFixed(2)}
+                </Text>
+                <Text style={[styles.tableCellBold, styles.textRight, { flex: 1 }]}>
+                  € {(item.qty * item.unitPrice).toFixed(2)}
+                </Text>
               </View>
-              <Text style={[styles.tableCell, styles.textCenter, { flex: 1 }]}>
-                {item.qty}
-              </Text>
-              <Text style={[styles.tableCell, styles.textCenter, { flex: 1 }]}>
-                € {item.unitPrice.toFixed(2)}
-              </Text>
-              <Text style={[styles.tableCellBold, styles.textRight, { flex: 1 }]}>
-                € {(item.qty * item.unitPrice).toFixed(2)}
-              </Text>
-            </View>
+            </TouchableOpacity>
           ))
         )}
 
@@ -218,6 +249,17 @@ export default function DrinkTrackingScreen() {
         <TouchableOpacity style={styles.addButton} onPress={() => setIsModalVisible(true)}>
           <Text style={styles.addButtonText}>Add Item +</Text>
         </TouchableOpacity>
+
+        {/* Modal Edit and Delete */}
+        <EditDeleteDrinkModal
+          visible={isDetailModalVisible}
+          item={selectedItem}
+          eventId={eventId}
+          userId={userId}
+          onClose={() => setIsDetailModalVisible(false)}
+          onUpdateQuantity={handleUpdateQuantity}
+          onDeleteItem={handleDeleteItem}
+        />
 
         <AddItemModal
           visible={isModalVisible}
