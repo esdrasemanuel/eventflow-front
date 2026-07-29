@@ -86,7 +86,7 @@ export default function AddItemModal({ visible, onClose, eventId, userId, onItem
 
     const handleSave = async () => {
         if (!selectedBeverage) {
-            Alert.alert('Atenção', 'Select a drink.');
+            Alert.alert('Attention', 'Select a drink.');
             return;
         }
 
@@ -102,7 +102,7 @@ export default function AddItemModal({ visible, onClose, eventId, userId, onItem
                 beverageId: selectedBeverage.id,
                 quantity: quantity,
                 unitPrice: unitPrice,
-                userId: userId
+                addedBy: userId
             });
 
             Alert.alert('Sucess', 'Item registered successfully!');
@@ -120,7 +120,7 @@ export default function AddItemModal({ visible, onClose, eventId, userId, onItem
         <Modal visible={visible} animationType="slide" transparent={true} onRequestClose={onClose}>
             <View style={styles.modalOverlay}>
                 <View style={styles.modalContent}>
-                    {/* Cabeçalho */}
+                    {/* hearder */}
                     <View style={styles.modalHeader}>
                         <Text style={styles.modalTitle}>Add drinks</Text>
                         <TouchableOpacity onPress={onClose} disabled={submitting}>
@@ -128,7 +128,7 @@ export default function AddItemModal({ visible, onClose, eventId, userId, onItem
                         </TouchableOpacity>
                     </View>
 
-                    {/* Filtro de Categoria */}
+                    {/* gategory filter */}
                     <Text style={styles.label}>Categories:</Text>
                     <View style={styles.categoryContainer}>
                         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -149,7 +149,7 @@ export default function AddItemModal({ visible, onClose, eventId, userId, onItem
                         </ScrollView>
                     </View>
 
-                    {/* Lista de Bebidas */}
+                    {/* drink list */}
                     <Text style={styles.label}>Select the item:</Text>
                     {loadingCatalog ? (
                         <ActivityIndicator size="small" color="#2E6D67" style={{ marginVertical: 20 }} />
@@ -195,7 +195,6 @@ export default function AddItemModal({ visible, onClose, eventId, userId, onItem
 
                     {/* unit price  */}
                     <View style={styles.detailsRow}>
-                        {/* Preço Unitário Exibido (Read-only) */}
                         <View style={styles.stepperSection}>
                             <Text style={styles.infoLabel}>Unit price</Text>
                             <View style={styles.infoBox}>

@@ -10,7 +10,7 @@ export async function getTrackedItemsByEvent(eventId) {
 }
 
 // Save and add a tracked beverage item to the event
-export async function addTrackedItem({ eventId, beverageId, quantity, unitPrice, userId }) {
+export async function addTrackedItem({ eventId, beverageId, quantity, unitPrice, addedBy }) {
     const response = await fetch(`${API_URL}/api/drinkTracking/${eventId}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -18,7 +18,7 @@ export async function addTrackedItem({ eventId, beverageId, quantity, unitPrice,
       beverageId: Number(beverageId),
       quantity: Number(quantity),
       unitPrice: Number(unitPrice),
-      addedBy: Number(userId),
+      addedBy: Number(addedBy),
     }),
   });
 
