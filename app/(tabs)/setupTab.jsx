@@ -215,6 +215,11 @@ const ROOM_SETUPS = {
 
   "rovo's_boardroom": require('../../assets/images/setups/rovos_boardroom.jpeg'),
 
+  "full orient_banquet": require('../../assets/images/setups/fullOrientSetup.jpg'),
+  "concourse_existing layout": require('../../assets/images/setups/concurse.jpg'),
+  "restaurant_existing layout": require('../../assets/images/setups/restaurant.jpg'),
+  "snug_existing layout": require('../../assets/images/setups/snug.jpg'),
+
 
   'secret garden_existing layout': require('../../assets/images/setups/secret_garden_default.jpeg'),
   // add more....
@@ -222,6 +227,9 @@ const ROOM_SETUPS = {
 
 const getSetupImage = (room, setup) => {
   const key = `${room}_${setup}`.toLowerCase().trim();
+  console.log(key)
+  //console.log(ROOM_SETUPS)
+
   return ROOM_SETUPS[key];
 };
 
