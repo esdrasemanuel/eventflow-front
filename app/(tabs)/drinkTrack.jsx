@@ -58,6 +58,62 @@ export default function DrinkTrackingScreen() {
     loadTrackingData();
   };
 
+  //to show the images
+  const drinkImages = {
+  "/assets/images/drinksMenu/7up.png": require("../../assets/images/drinksMenu/7up.png"),
+  "/assets/images/drinksMenu/7up-free.png": require("../../assets/images/drinksMenu/7up-free.png"),
+  "/assets/images/drinksMenu/club-lemon.png": require("../../assets/images/drinksMenu/club-lemon.png"),
+  "/assets/images/drinksMenu/club-orange.png": require("../../assets/images/drinksMenu/club-orange.png"),
+  "/assets/images/drinksMenu/dash.png": require("../../assets/images/drinksMenu/dash.png"),
+  "/assets/images/drinksMenu/elderflower-tonic.png": require("../../assets/images/drinksMenu/elderflower-tonic.png"),
+  "/assets/images/drinksMenu/fanta-orange.png": require("../../assets/images/drinksMenu/fanta-orange.png"),
+  "/assets/images/drinksMenu/ginger-ale.png": require("../../assets/images/drinksMenu/ginger-ale.png"),
+  "/assets/images/drinksMenu/ginger-beer.png": require("../../assets/images/drinksMenu/ginger-beer.png"),
+  "/assets/images/drinksMenu/london-essence-tonic.png": require("../../assets/images/drinksMenu/london-essence-tonic.png"),
+  "/assets/images/drinksMenu/max-pepsi.png": require("../../assets/images/drinksMenu/max-pepsi.png"),
+  "/assets/images/drinksMenu/pepsi.png": require("../../assets/images/drinksMenu/pepsi.png"),
+  "/assets/images/drinksMenu/slim-tonic-water.png": require("../../assets/images/drinksMenu/slim-tonic-water.png"),
+
+  "/assets/images/drinksMenu/san-abello-sauv-blanc-bottle.png": require("../../assets/images/drinksMenu/san-abello-sauv-blanc-bottle.png"),
+  "/assets/images/drinksMenu/stoneburn-nz-sauv-blanc-bottle.png": require("../../assets/images/drinksMenu/stoneburn-nz-sauv-blanc-bottle.png"),
+  "/assets/images/drinksMenu/villa-dei-fiori-pecorino-bottle.png": require("../../assets/images/drinksMenu/villa-dei-fiori-pecorino-bottle.png"),
+  "/assets/images/drinksMenu/chablis-bottle.png": require("../../assets/images/drinksMenu/chablis-bottle.png"),
+  "/assets/images/drinksMenu/conte-vecchio-pinot-grigio-bottle.png": require("../../assets/images/drinksMenu/conte-vecchio-pinot-grigio-bottle.png"),
+  "/assets/images/drinksMenu/el-muro-blanco-bottle.png": require("../../assets/images/drinksMenu/el-muro-blanco-bottle.png"),
+  "/assets/images/drinksMenu/la-serre-sauv-blanc-bottle.png": require("../../assets/images/drinksMenu/la-serre-sauv-blanc-bottle.png"),
+  "/assets/images/drinksMenu/little-eden-chardonnay-bottle.png": require("../../assets/images/drinksMenu/little-eden-chardonnay-bottle.png"),
+  "/assets/images/drinksMenu/raimat-abadia-albarino-organic-bottle.png": require("../../assets/images/drinksMenu/raimat-abadia-albarino-organic-bottle.png"),
+
+  "/assets/images/drinksMenu/chateau-mondain-bordeaux-bottle.png": require("../../assets/images/drinksMenu/chateau-mondain-bordeaux-bottle.png"),
+  "/assets/images/drinksMenu/ederra-crianza-rioja-bottle.png": require("../../assets/images/drinksMenu/ederra-crianza-rioja-bottle.png"),
+  "/assets/images/drinksMenu/el-colectivo-malbec-bottle.png": require("../../assets/images/drinksMenu/el-colectivo-malbec-bottle.png"),
+  "/assets/images/drinksMenu/el-muro-tinto-tempranillo-bottle.png": require("../../assets/images/drinksMenu/el-muro-tinto-tempranillo-bottle.png"),
+  "/assets/images/drinksMenu/granaio-chianti-bottle.png": require("../../assets/images/drinksMenu/granaio-chianti-bottle.png"),
+ // "/assets/images/drinksMenu/la-serre-cabernet-sauv-bottle.png": require("../../assets/images/drinksMenu/la-serre-cabernet-sauv-bottle.png"),
+  "/assets/images/drinksMenu/lorosco-reserva-cabernet-sauv-bottle.png": require("../../assets/images/drinksMenu/lorosco-reserva-cabernet-sauv-bottle.png"),
+  "/assets/images/drinksMenu/montepulciano.png": require("../../assets/images/drinksMenu/montepulciano.png"),
+  "/assets/images/drinksMenu/vinuva-nero-davola-bottle.png": require("../../assets/images/drinksMenu/vinuva-nero-davola-bottle.png"),
+
+  "/assets/images/drinksMenu/pettit-papillon-grenache-rose-bottle.png": require("../../assets/images/drinksMenu/pettit-papillon-grenache-rose-bottle.png"),
+  "/assets/images/drinksMenu/ramon-bilbao-rose-bottle.png": require("../../assets/images/drinksMenu/ramon-bilbao-rose-bottle.png"),
+  "/assets/images/drinksMenu/whispering-angel-bottle.png": require("../../assets/images/drinksMenu/whispering-angel-bottle.png"),
+
+  "/assets/images/drinksMenu/heineken-bottle.png": require("../../assets/images/drinksMenu/heineken-bottle.png"),
+  "/assets/images/drinksMenu/corona-bottle.png": require("../../assets/images/drinksMenu/corona-bottle.png"),
+  "/assets/images/drinksMenu/peroni-bottle.png": require("../../assets/images/drinksMenu/peroni-bottle.png"),
+  "/assets/images/drinksMenu/bulmers-long-neck-bottle.png": require("../../assets/images/drinksMenu/bulmers-long-neck-bottle.png"),
+
+  "/assets/images/drinksMenu/heineken-0.0.png": require("../../assets/images/drinksMenu/heineken-0.0.png"),
+  "/assets/images/drinksMenu/bulmers-0.0.png": require("../../assets/images/drinksMenu/bulmers-0.0.png"),
+
+  "/assets/images/drinksMenu/prosecco-bottle.png": require("../../assets/images/drinksMenu/prosecco-bottle.png"),
+  "/assets/images/drinksMenu/vitelli-frizzante-bottle.png": require("../../assets/images/drinksMenu/vitelli-frizzante-bottle.png"),
+
+  "/assets/images/drinksMenu/laurent-perrier-bottle.png": require("../../assets/images/drinksMenu/laurent-perrier-bottle.png"),
+  "/assets/images/drinksMenu/palmer-brut-reserve-nv-bottle.png": require("../../assets/images/drinksMenu/palmer-brut-reserve-nv-bottle.png"),
+  "/assets/images/drinksMenu/veuve-cliq-bottle.png": require("../../assets/images/drinksMenu/veuve-cliq-bottle.png"),
+};
+
   // to get the added items
   const loadTrackingData = useCallback(async () => {
     try {
@@ -71,7 +127,7 @@ export default function DrinkTrackingScreen() {
         const currentQty = Number(item.qty || item.quantity || 0);
         const currentUnitPrice = Number(item.unitPrice || item.unit_price || 0);
         const itemName = item.name || item.beverage?.name || 'Item';
-        const itemImage = item.image || item.beverage?.imageUrl || 'https://via.placeholder.com/40';
+        const itemImage = item.image || item.beverage?.imageUrl;
 
         if (acc[key]) {
           // if exist just incress the qty
@@ -216,7 +272,7 @@ export default function DrinkTrackingScreen() {
             >
               <View key={item.id} style={styles.tableRow}>
                 <View style={[styles.itemDetail, { flex: 2 }]}>
-                  <Image source={{ uri: item.image }} style={styles.itemImage} />
+                  <Image source={drinkImages[item.image]} style={styles.itemImage} />
                   <Text style={styles.itemName}>{item.name}</Text>
                 </View>
                 <Text style={[styles.tableCell, styles.textCenter, { flex: 1 }]}>
@@ -266,6 +322,7 @@ export default function DrinkTrackingScreen() {
           onClose={() => setIsModalVisible(false)}
           eventId={eventId}
           userId={userId}
+          drinkImages={drinkImages}
           onItemAdded={loadTrackingData} // when added and closes load items added
         />
       </ScrollView>

@@ -227,9 +227,6 @@ const ROOM_SETUPS = {
 
 const getSetupImage = (room, setup) => {
   const key = `${room}_${setup}`.toLowerCase().trim();
-  console.log(key)
-  //console.log(ROOM_SETUPS)
-
   return ROOM_SETUPS[key];
 };
 

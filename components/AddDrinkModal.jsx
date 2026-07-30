@@ -14,7 +14,7 @@ import {
 import { getBeveragesCatalog, addTrackedItem } from '../services/drinkTrackingService';
 import { COLORS } from '../constants/theme';
 
-export default function AddItemModal({ visible, onClose, eventId, userId, onItemAdded }) {
+export default function AddItemModal({ visible, onClose, eventId, userId, onItemAdded, drinkImages }) {
     const [beverages, setBeverages] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [selectedBeverage, setSelectedBeverage] = useState(null);
@@ -172,7 +172,7 @@ export default function AddItemModal({ visible, onClose, eventId, userId, onItem
                                             onPress={() => handleSelectBeverage(item)}
                                         >
                                             {item.imageUrl && (
-                                                <Image source={{ uri: item.imageUrl }} style={styles.beverageImage} />
+                                                <Image source={drinkImages[item.imageUrl]} style={styles.beverageImage} />
                                             )}
                                             <View style={{ flex: 1 }}>
                                                 <Text style={[styles.beverageName, isSelected && styles.textSelected]}>
