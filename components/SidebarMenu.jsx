@@ -64,20 +64,20 @@ export default function SidebarMenu({ visible, onClose }) {
                 <Text style={styles.menuItemText}>🏠 Home</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.menuItem} onPress={onClose}>
-                <Text style={styles.menuItemText}>📅 Calendar</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.menuItem} onPress={onClose}>
-                <Text style={styles.menuItemText}>💬 Messages</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.menuItem}
+              <TouchableOpacity style={styles.menuItem}xc
                 onPress={() => router.push({
                   pathname: '(tabs)/addEvents'
                   })} 
               >
                 <Text style={styles.menuItemText}>📝 Add Events</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.menuItem}
+                onPress={() => router.push({
+                  pathname: '(tabs)/createDinnerScreen'
+                  })} 
+              >
+                <Text style={styles.menuItemText}>🍽 Create Dinner</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.menuItem} onPress={onClose}>

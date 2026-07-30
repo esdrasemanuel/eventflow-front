@@ -1,11 +1,42 @@
-import React, { useMemo } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
+import React, { useMemo, useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { router } from 'expo-router';
+import { fetchAssignedTables } from '../../services/dinnerService';
 
 export default function FnBTab({ event, userId }) {
   // set activities in arrays
   const activities = Array.isArray(event?.activities) ? event.activities : [];
   const eventId = event.id;
+
+  const [assignedDinnerData, setAssignedDinnerData] = useState(null);
+  const [loadingDinner, setLoadingDinner] = useState(true);
+
+  useEffect(() => {
+    async function loadAssignedTables() {
+      if (!eventId || !userId) {
+        setLoadingDinner(false);
+        return;
+      }
+
+      try {
+        setLoadingDinner(true);
+        // to check if has dinner and table assigned for the user
+        const data = await fetchAssignedTables(eventId, userId);
+
+        if (data && data.hasTables) {
+          setAssignedDinnerData(data);
+        } else {
+          setAssignedDinnerData(null);
+        }
+      } catch (error) {
+        setAssignedDinnerData(null);
+      } finally {
+        setLoadingDinner(false);
+      }
+    }
+
+    loadAssignedTables();
+  }, [eventId, userId]);
 
   const fnbItems = useMemo(() => {
     const rawItems = [];
@@ -18,8 +49,8 @@ export default function FnBTab({ event, userId }) {
 
         // to get food service
         if (act.food_services) {
-          const foodList = Array.isArray(act.food_services) 
-            ? act.food_services 
+          const foodList = Array.isArray(act.food_services)
+            ? act.food_services
             : [act.food_services];
 
           foodList.forEach((food) => {
@@ -28,8 +59,8 @@ export default function FnBTab({ event, userId }) {
             const rawFoodItems = Array.isArray(food.food_items)
               ? food.food_items
               : food.food_items
-              ? [food.food_items]
-              : [];
+                ? [food.food_items]
+                : [];
 
             rawItems.push({
               type: 'food',
@@ -76,7 +107,7 @@ export default function FnBTab({ event, userId }) {
         if (!item) return;
 
         const foodItemsList = Array.isArray(item.items) ? item.items : [];
-        
+
         const itemsSignature = foodItemsList
           .map((i) => (i && typeof i === 'object' ? i.item_name || '' : String(i)))
           .filter(Boolean)
@@ -118,6 +149,37 @@ export default function FnBTab({ event, userId }) {
 
       <Text style={styles.sectionHeader}>Food & Beverage Services</Text>
 
+      {/* Dinner Service Card */}
+      {loadingDinner ? (
+        <ActivityIndicator size="small" color="#437B6D" style={{ marginVertical: 10 }} />
+      ) : assignedDinnerData && assignedDinnerData.hasTables ? (
+        <View style={styles.dinnerCard}>
+          <View style={styles.dinnerCardHeader}>
+            <Text style={styles.dinnerBadge}>🍽️ Dinner Assigned</Text>
+            <Text style={styles.dinnerTitle}>
+              {assignedDinnerData.tables[0]?.dinner?.name || 'Dinner Service'}
+            </Text>
+            <Text style={styles.dinnerTablesText}>
+              Tables: {assignedDinnerData.tables.map(t => `Table ${t.tableNumber}`).join(', ')}
+            </Text>
+          </View>
+          <TouchableOpacity
+            style={styles.orderButton}
+            activeOpacity={0.8}
+            onPress={() => router.push({
+              pathname: '/myTableScreen',
+              params: {
+                eventId: eventId,
+                userId: userId,
+                tables: JSON.stringify(assignedDinnerData.tables)
+              }
+            })}
+          >
+            <Text style={styles.orderButtonText}>Take orders</Text>
+          </TouchableOpacity>
+        </View>
+      ) : null}
+
       {fnbItems.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyText}>No F&B details registered for this event.</Text>
@@ -135,7 +197,7 @@ export default function FnBTab({ event, userId }) {
                   <View style={styles.beverageRow}>
                     <View style={styles.beverageInfo}>
                       <Text style={styles.cardTitle}>{item.title}</Text>
-                      
+
                       {item.timeRange ? (
                         <Text style={styles.timeText}>🕒 {item.timeRange}</Text>
                       ) : null}
@@ -150,15 +212,15 @@ export default function FnBTab({ event, userId }) {
                     </View>
 
                     <TouchableOpacity style={styles.trackButton} activeOpacity={0.8}
-                                    onPress={() => router.push({
-                                      pathname: '/drinkTrack',
-                                      params: { 
-                                       eventId: eventId,
-                                       item: JSON.stringify(item),
-                                       event: JSON.stringify(event),
-                                       userId: userId
-                                      }
-                                    })} 
+                      onPress={() => router.push({
+                        pathname: '/drinkTrack',
+                        params: {
+                          eventId: eventId,
+                          item: JSON.stringify(item),
+                          event: JSON.stringify(event),
+                          userId: userId
+                        }
+                      })}
                     >
                       <Text style={styles.trackButtonText}>Track Service +</Text>
                     </TouchableOpacity>
@@ -246,6 +308,49 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#856404',
   },
+  dinnerCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    padding: 14,
+    marginBottom: 16,
+    borderLeftWidth: 4,
+    borderLeftColor: '#437B6D',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 3,
+    elevation: 2,
+  },
+  dinnerCardHeader: {
+    marginBottom: 10,
+  },
+  dinnerBadge: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#437B6D',
+    marginBottom: 2,
+  },
+  dinnerTitle: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#2C3E50',
+  },
+  dinnerTablesText: {
+    fontSize: 12,
+    color: '#555555',
+    marginTop: 2,
+  },
+  orderButton: {
+    backgroundColor: '#437B6D',
+    paddingVertical: 10,
+    borderRadius: 6,
+    alignItems: 'center',
+  },
+  orderButtonText: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '700',
+  },
   sectionHeader: {
     fontSize: 14,
     fontWeight: '700',
@@ -331,7 +436,7 @@ const styles = StyleSheet.create({
   },
   beverageRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justify: 'space-between',
     alignItems: 'center',
   },
   beverageInfo: {
