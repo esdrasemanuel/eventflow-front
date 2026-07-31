@@ -2,8 +2,9 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { router } from 'expo-router';
 import { fetchAssignedTables } from '../../services/dinnerService';
+import { COLORS, SPACING, FONT_SIZES } from '../../constants/theme';
 
-export default function FnBTab({ event, userId }) {
+export default function FnBTab({ event, userId, userRole }) {
   // set activities in arrays
   const activities = Array.isArray(event?.activities) ? event.activities : [];
   const eventId = event.id;
@@ -179,6 +180,48 @@ export default function FnBTab({ event, userId }) {
           </TouchableOpacity>
         </View>
       ) : null}
+
+      {/* Kitchen view Card */}
+      {userRole === 'ADMIN' && (
+        loadingDinner ? (
+          <ActivityIndicator size="small" color={COLORS.secondary} style={{ marginVertical: SPACING.sm }} />
+        ) : assignedDinnerData ? (
+          <View style={styles.kitchenCard}>
+            <View style={styles.kitchenCardHeader}>
+              <View style={styles.badgeRow}>
+                <Text style={styles.kitchenBadge}>👨‍🍳 Kitchen View</Text>
+                <View style={styles.liveIndicator}>
+                  <View style={styles.liveDot} />
+                  <Text style={styles.liveText}>Live</Text>
+                </View>
+              </View>
+
+              <Text style={styles.kitchenTitle}>
+                {assignedDinnerData.tables?.[0]?.dinner?.name || 'Kitchen'}
+              </Text>
+
+              <Text style={styles.kitchenSubtitle}>
+                Monitor orders and preparation summary
+              </Text>
+            </View>
+
+            <TouchableOpacity
+              style={styles.kitchenButton}
+              activeOpacity={0.8}
+              onPress={() =>
+                router.push({
+                  pathname: '/kitchenScreen',
+                  params: {
+                    eventId: eventId,
+                  },
+                })
+              }
+            >
+              <Text style={styles.kitchenButtonText}>Open Kitchen View</Text>
+            </TouchableOpacity>
+          </View>
+        ) : null
+      )}
 
       {fnbItems.length === 0 ? (
         <View style={styles.emptyContainer}>
@@ -471,5 +514,76 @@ const styles = StyleSheet.create({
   emptyText: {
     color: '#7E8B9B',
     fontSize: 14,
+  },
+  // kitchen card: 
+  kitchenCard: {
+    backgroundColor: COLORS.white,
+    borderRadius: 12,
+    padding: SPACING.md,
+    marginVertical: SPACING.sm,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    elevation: 2,
+  },
+  kitchenCardHeader: {
+    marginBottom: SPACING.sm,
+  },
+  badgeRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: SPACING.xs,
+  },
+  kitchenBadge: {
+    fontSize: FONT_SIZES.sm - 2,
+    fontWeight: '700',
+    color: COLORS.statusUpcoming,
+    backgroundColor: '#FEF3C7',
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: SPACING.xs,
+    borderRadius: 6,
+    overflow: 'hidden',
+  },
+  liveIndicator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#DCFCE7',
+    paddingHorizontal: SPACING.xs + 2,
+    paddingVertical: 2,
+    borderRadius: 10,
+  },
+  liveDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: COLORS.statusInProgress,
+    marginRight: 4,
+  },
+  liveText: {
+    fontSize: FONT_SIZES.sm - 4,
+    fontWeight: '700',
+    color: '#15803D',
+  },
+  kitchenTitle: {
+    fontSize: FONT_SIZES.md,
+    fontWeight: '700',
+    color: COLORS.textDark,
+    marginBottom: 2,
+  },
+  kitchenSubtitle: {
+    fontSize: FONT_SIZES.sm - 2,
+    color: COLORS.textMuted,
+  },
+  kitchenButton: {
+    backgroundColor: COLORS.primary, // Cor principal #382109
+    paddingVertical: SPACING.sm + 2,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  kitchenButtonText: {
+    color: COLORS.white,
+    fontSize: FONT_SIZES.sm,
+    fontWeight: '700',
   },
 });

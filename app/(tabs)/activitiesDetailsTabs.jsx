@@ -11,7 +11,7 @@ import TimelineTab from './timelineTab';
 // activities tabs where have all event informations  
 export default function DetailsEventsScreen() {
   const params = useLocalSearchParams();
-  const { id, eventData, backTo, userId, tab } = params;
+  const { id, eventData, backTo, userId, tab, userRole } = params;
   const [activeTab, setActiveTab] = useState(() => (tab ? String(tab) : 'Timeline'));
   // event param with the data
   const event = eventData ? JSON.parse(params.eventData) : null;
@@ -29,7 +29,7 @@ export default function DetailsEventsScreen() {
       case 'Setup':
         return <SetupTab event={event} userId={userId} />;
       case 'F&B':
-        return <FoodAndBTab event={event} userId={userId} />;
+        return <FoodAndBTab event={event} userId={userId} userRole={userRole}/>;
       case 'Notes':
         return <NotesTab event={event} />;
       case 'Details':

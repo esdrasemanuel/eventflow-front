@@ -15,7 +15,7 @@ export default function AllEventsScreen() {
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [filterStatus, setFilterStatus] = useState('all');
   const params = useGlobalSearchParams ();
-  const { userId } = params;
+  const { userId, userRole } = params;
   
   useEffect(() => {
     loadEvents();
@@ -106,7 +106,8 @@ export default function AllEventsScreen() {
                         id: event.id, 
                         eventData: JSON.stringify(event),
                         backTo: 'allEvents',
-                        userId: userId
+                        userId: userId,
+                        userRole: userRole
                         }
                     })}>
                 <EventCard key={event.id} event={event} />

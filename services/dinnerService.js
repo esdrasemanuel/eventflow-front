@@ -105,3 +105,17 @@ export async function syncOrderData(tableId, itemId, action, data = {}) {
     console.error('Error:', error);
   }
 };
+
+export async function fetchKitchenSummary(eventId) {
+  try {
+    const response = await fetch(`${API_URL}/api/dinner/kitchenSummary/${eventId}`);
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || `Erro HTTP: ${response.status}`);
+    }
+    return data;
+  } catch (error) {
+    console.error('Error:', error);
+    throw error;
+  }
+}

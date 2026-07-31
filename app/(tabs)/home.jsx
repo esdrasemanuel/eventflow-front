@@ -173,7 +173,8 @@ export default function HomeScreen() {
                   params: { 
                     id: event.id, 
                     eventData: JSON.stringify(event),
-                    userId: userId
+                    userId: userId,
+                    userRole: userRole
                   }
                 })}
               >
@@ -187,7 +188,8 @@ export default function HomeScreen() {
                 onPress={() => router.push({
                   pathname: '/allEvents',
                   params: { 
-                    userId: userId
+                    userId: userId,
+                    userRole: userRole
                   }
                 })} 
           >
