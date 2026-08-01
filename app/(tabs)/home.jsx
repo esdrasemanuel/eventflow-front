@@ -112,7 +112,7 @@ export default function HomeScreen() {
     <SafeAreaView style={styles.safeContainer}>
       
       {/* Sidebar overlay component loaded and controled via state */}
-      <SidebarMenu visible={menuVisible} onClose={() => setMenuVisible(false)} />
+      <SidebarMenu userRole={userRole} visible={menuVisible} onClose={() => setMenuVisible(false)} />
       <FilterModal
         visible={showFilterModal}
         selectedFilter={filterStatus}

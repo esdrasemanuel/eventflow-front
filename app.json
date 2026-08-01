@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "eventflow-front",
-    "slug": "eventflow-front",
+    "slug": "esdras",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -14,6 +14,7 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
+      "bundleIdentifier": "com.esdras.eventflow",
       "supportsTablet": true
     },
     "android": {
@@ -35,6 +36,13 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "5f4bcd0b-aa1c-402f-8f64-d81569f72733"
+      }
+    },
+    "owner": "esdrasemanuelmoreira"
   }
 }

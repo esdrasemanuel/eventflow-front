@@ -24,7 +24,7 @@ export default function LoginScreen() {
       // Execute network transaction with backend database service
       const userData = await loginService(email, password);
       
-      console.log('Login successful:', userData);
+      //console.log('Login successful:', userData);
 
       // Save the entire user object (contains firstName, role, email, ....)
       await AsyncStorage.setItem('@EventFlow:user', JSON.stringify(userData.user));

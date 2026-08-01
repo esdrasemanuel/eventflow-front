@@ -3,8 +3,12 @@ import { View, Text, StyleSheet, Modal, TouchableOpacity, SafeAreaView, Alert } 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 
-export default function SidebarMenu({ visible, onClose }) {
+export default function SidebarMenu({ visible, onClose, userRole }) {
   
+  // Roles
+  const allowedRoles = ['ADMIN', 'SUPERVISOR', 'MANAGER'];
+  const hasManagementAccess = userRole && allowedRoles.includes(userRole.toUpperCase());
+
   const handleLogout = () => {
     Alert.alert(
       'Logout',
@@ -23,7 +27,7 @@ export default function SidebarMenu({ visible, onClose }) {
               onClose();
 
               // clean section
-              await AsyncStorage.clear() 
+              await AsyncStorage.clear();
 
               // redirect user to login 
               router.replace('/'); 
@@ -38,7 +42,7 @@ export default function SidebarMenu({ visible, onClose }) {
   
   return (
     <Modal
-      animationType="fade" // for Smooths the dark backdrop entry
+      animationType="fade" // Smooths the dark backdrop entry
       transparent={true}
       visible={visible}
       onRequestClose={onClose}
@@ -46,7 +50,7 @@ export default function SidebarMenu({ visible, onClose }) {
       {/* Dark semi-transparent overlay backdrop */}
       <TouchableOpacity style={styles.overlay} activeOpacity={1} onPress={onClose}>
         
-        {/* Sidebar container is sliding from the left */}
+        {/* Sidebar container sliding from the left */}
         <TouchableOpacity style={styles.sidebarContainer} activeOpacity={1}>
           <SafeAreaView style={styles.safeArea}>
             
@@ -64,21 +68,30 @@ export default function SidebarMenu({ visible, onClose }) {
                 <Text style={styles.menuItemText}>🏠 Home</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.menuItem}xc
-                onPress={() => router.push({
-                  pathname: '(tabs)/addEvents'
-                  })} 
-              >
-                <Text style={styles.menuItemText}>📝 Add Events</Text>
-              </TouchableOpacity>
+              {/* Exibidos apenas para ADMIN, SUPERVISOR ou MANAGER */}
+              {hasManagementAccess && (
+                <>
+                  <TouchableOpacity 
+                    style={styles.menuItem}
+                    onPress={() => {
+                      onClose();
+                      router.push({ pathname: '(tabs)/addEvents' });
+                    }} 
+                  >
+                    <Text style={styles.menuItemText}>📝 Add Events</Text>
+                  </TouchableOpacity>
 
-              <TouchableOpacity style={styles.menuItem}
-                onPress={() => router.push({
-                  pathname: '(tabs)/createDinnerScreen'
-                  })} 
-              >
-                <Text style={styles.menuItemText}>🍽 Create Dinner</Text>
-              </TouchableOpacity>
+                  <TouchableOpacity 
+                    style={styles.menuItem}
+                    onPress={() => {
+                      onClose();
+                      router.push({ pathname: '(tabs)/createDinnerScreen' });
+                    }} 
+                  >
+                    <Text style={styles.menuItemText}>🍽 Create Dinner</Text>
+                  </TouchableOpacity>
+                </>
+              )}
 
               <TouchableOpacity style={styles.menuItem} onPress={onClose}>
                 <Text style={styles.menuItemText}>👤 Profile</Text>

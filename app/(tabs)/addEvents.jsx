@@ -10,13 +10,14 @@ import {
 } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import { router } from 'expo-router';
-import api from '../../services/api'; 
 
 import BEOImportSuccessModal from '../../components/BeoModal'; 
 
 export default function AddEventScreen() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
+  const API_URL = process.env.EXPO_PUBLIC_API_URL;
+
 
   //modal states
   const [modalVisible, setModalVisible] = useState(false);
@@ -41,42 +42,44 @@ export default function AddEventScreen() {
 
   // send File
   const handleUploadBEO = async () => {
-    if (!selectedFile) {
-      Alert.alert('Attention', 'Please select a BEO (PDF) file first.');
-      return;
+  if (!selectedFile) {
+    Alert.alert('Attention', 'Please select a BEO (PDF) file first.');
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    // Create form
+    const formData = new FormData();
+    formData.append('file', {
+      uri: selectedFile.uri,
+      name: selectedFile.name || 'beo_document.pdf',
+      type: selectedFile.mimeType || 'application/pdf',
+    });
+
+    const response = await fetch(`${API_URL}/api/import/beo`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'The BEO file could not be imported.');
     }
 
-    setLoading(true);
+    setImportResponse(data);
+    setModalVisible(true);
 
-    try {
-      // Create form
-      const formData = new FormData();
-      formData.append('file', {
-        uri: selectedFile.uri,
-        name: selectedFile.name || 'beo_document.pdf',
-        type: selectedFile.mimeType || 'application/pdf',
-      });
-
-      const response = await api.post('/api/import/beo', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
-      console.log("respondse: ",response)
-      setImportResponse(response.data);
-      setModalVisible(true);
-
-      setSelectedFile(null);
-    } catch (error) {
-      console.error('Import Error:', error);
-      const errorMessage =
-        error.response?.data?.error || 'The BEO file could not be imported.';
-      Alert.alert('Import Error', errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  };
+    setSelectedFile(null);
+  } catch (error) {
+    console.error('Import Error:', error);
+    Alert.alert('Import Error', error.message || 'The BEO file could not be imported.');
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleCloseModalAndGoHome = () => {
     setModalVisible(false);
