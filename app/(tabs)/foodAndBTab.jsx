@@ -172,7 +172,8 @@ export default function FnBTab({ event, userId, userRole }) {
               params: {
                 eventId: eventId,
                 userId: userId,
-                tables: JSON.stringify(assignedDinnerData.tables)
+                tables: JSON.stringify(assignedDinnerData.tables),
+                userRole: userRole
               }
             })}
           >

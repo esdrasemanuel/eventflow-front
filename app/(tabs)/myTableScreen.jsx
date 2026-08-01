@@ -16,7 +16,7 @@ import { COLORS, SPACING } from '../../constants/theme';
 import { syncOrderData as syncOrderService } from '../../services/dinnerService';
 
 export default function MyTablesScreen() {
-  const { eventId, userId, tables: tablesParam } = useLocalSearchParams();
+  const { eventId, userId, tables: tablesParam, userRole } = useLocalSearchParams();
 
   const [tables, setTables] = useState([]);
   const [eventMenu, setEventMenu] = useState({

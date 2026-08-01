@@ -8,9 +8,9 @@ import { getEventStatus } from '../../utils/eventStatus';
 import FilterModal from '../../components/FilterModal';
 import EventCard from '../../components/EventCard';
 import { router, useFocusEffect } from 'expo-router';
+import { COLORS, SPACING, FONT_SIZES } from '../../constants/theme';
 
 export default function HomeScreen() {
-  // State to manage the open and close visibility of the sidebar menu
   const [menuVisible, setMenuVisible] = useState(false);
   const [currentDate, setCurrentDate] = useState('');
   const [userName, setUserName] = useState('User');
@@ -27,7 +27,6 @@ export default function HomeScreen() {
     drinkReception: 0
   });
 
-  // update always when user back to the home
   useFocusEffect(
     useCallback(() => {
       generateCurrentDate();
@@ -37,23 +36,17 @@ export default function HomeScreen() {
   );
 
   const generateCurrentDate = () => {
-      // Formats the live date dynamically 
-      const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-      const today = new Date();
-      const formattedDate = new Intl.DateTimeFormat('en-US', options).format(today);
-      setCurrentDate(formattedDate);
-    };
+    const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+    const today = new Date();
+    const formattedDate = new Intl.DateTimeFormat('en-US', options).format(today);
+    setCurrentDate(formattedDate);
+  };
 
   const loadUserData = async () => {
     try {
-      // Reading the raw string data from AsyncStorage
       const storedUser = await AsyncStorage.getItem('@EventFlow:user');
-      
       if (storedUser) {
-        // Parsing the string back into a JavaScript object
         const parsedUser = JSON.parse(storedUser);
-        
-        // Setting state values with the logged-in user details
         setUserName(parsedUser.firstName || 'User');
         setUserRole(parsedUser.role || '');
         setUserId(parsedUser.id);
@@ -73,18 +66,15 @@ export default function HomeScreen() {
     }
   };
 
-  // filter
   const filteredEvents = useMemo(() => {
     if (filterStatus === 'all') return events;
     return events.filter((event) => getEventStatus(event).value === filterStatus);
   }, [events, filterStatus]);
 
-  // overview dinamic 
   const overview = useMemo(() => {
     const now = new Date();
     const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
-    // based on the time
     const currentInProgressCount = events.filter(event => {
       try {
         if (!event.start_time || !event.end_time) return false;
@@ -108,10 +98,18 @@ export default function HomeScreen() {
     };
   }, [events, rawOverview]);
 
+  const handleNavigateToAllEvents = () => {
+    router.push({
+      pathname: '/allEvents',
+      params: { 
+        userId: userId,
+        userRole: userRole
+      }
+    });
+  };
+
   return (
     <SafeAreaView style={styles.safeContainer}>
-      
-      {/* Sidebar overlay component loaded and controled via state */}
       <SidebarMenu userRole={userRole} visible={menuVisible} onClose={() => setMenuVisible(false)} />
       <FilterModal
         visible={showFilterModal}
@@ -125,8 +123,6 @@ export default function HomeScreen() {
         <View style={styles.headerBackground}>
           <View style={styles.headerRow}>
             <View style={styles.menuAndGreeting}>
-              
-              {/* Menu icon button triggering sidebar modal view to open */}
               <TouchableOpacity onPress={() => setMenuVisible(true)} activeOpacity={0.7}>
                 <Text style={styles.menuIcon}>≡</Text>
               </TouchableOpacity>
@@ -138,10 +134,8 @@ export default function HomeScreen() {
             </View>
           </View>
 
-          {/* Section Today's Overview Layout Header */}
           <Text style={styles.sectionTitleHeader}>Today's overview</Text>
           
-          {/* Summary horizontal area wrapper */}
           <View style={styles.cardsSummary}>
             <SummaryCard value={overview.eventsToday} label="Events Today" valueColor="#2979FF" />
             <SummaryCard value={overview.inProgress} label="In Progress" valueColor="#00E676" />
@@ -150,51 +144,62 @@ export default function HomeScreen() {
           </View>
         </View>
 
-        {/* Section Today's Events will be placed here */}
+        {/* Section Today's Events */}
         <View style={styles.listingSection}>
           <View style={styles.listingHeaderRow}>
             <Text style={styles.sectionTitleBody}>Today's events</Text>
             <TouchableOpacity onPress={() => setShowFilterModal(true)}>
-              <Text>⚙ Filter</Text>
+              <Text style={styles.filterText}>⚙ Filter</Text>
             </TouchableOpacity>
           </View>
 
-          {/* Event items listing cards will be here */}
+          {/* if not events today */}
           {filteredEvents.length === 0 ? (
-            <View style={styles.placeholderListCard}>
-              <Text>No Events today</Text>
+            <View style={styles.emptyStateCard}>
+              <Text style={styles.emptyStateIcon}>📅</Text>
+              <Text style={styles.emptyStateTitle}>No Events Today</Text>
+              <Text style={styles.emptyStateSubtext}>
+                There are no events scheduled for today. Check your upcoming schedule.
+              </Text>
+              
+              <TouchableOpacity 
+                style={styles.emptyStateButton}
+                activeOpacity={0.8}
+                onPress={handleNavigateToAllEvents}
+              >
+                <Text style={styles.emptyStateButtonText}>View Next Events  ➔</Text>
+              </TouchableOpacity>
             </View>
           ) : (
-            filteredEvents.map((event) => (
-              <TouchableOpacity
-                key={event.id}
-                onPress={() => router.push({
-                  pathname: '/activitiesDetailsTabs',
-                  params: { 
-                    id: event.id, 
-                    eventData: JSON.stringify(event),
-                    userId: userId,
-                    userRole: userRole
-                  }
-                })}
+            <>
+              {filteredEvents.map((event) => (
+                <TouchableOpacity
+                  key={event.id}
+                  onPress={() => router.push({
+                    pathname: '/activitiesDetailsTabs',
+                    params: { 
+                      id: event.id, 
+                      eventData: JSON.stringify(event),
+                      userId: userId,
+                      userRole: userRole
+                    }
+                  })}
+                >
+                  <EventCard event={event} />
+                </TouchableOpacity>
+              ))}
+
+              {/* button see all */}
+              <TouchableOpacity 
+                style={styles.primaryActionButton}
+                activeOpacity={0.8}
+                onPress={handleNavigateToAllEvents}
               >
-                <EventCard event={event} />
+                <Text style={styles.primaryActionButtonText}>View All Upcoming Events  ➔</Text>
               </TouchableOpacity>
-            ))
+            </>
           )}
 
-          {/* View all button */}
-          <TouchableOpacity style={styles.textContainer}
-                onPress={() => router.push({
-                  pathname: '/allEvents',
-                  params: { 
-                    userId: userId,
-                    userRole: userRole
-                  }
-                })} 
-          >
-            <Text style={styles.linkText}>View all→</Text>
-          </TouchableOpacity>
         </View>
 
       </ScrollView>
@@ -203,11 +208,11 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  safeContainer: { flex: 1, backgroundColor: '#F8F9FA' },
-  scrollContainer: { flexGrow: 1 },
+  safeContainer: { flex: 1, backgroundColor: COLORS.backgroundLight || '#F8F9FA' },
+  scrollContainer: { flexGrow: 1, paddingBottom: 24 },
   headerBackground: {
-    backgroundColor: '#FFCDD2',
-    paddingHorizontal: 24,
+    backgroundColor: COLORS.accentPeach || '#FFCDD2',
+    paddingHorizontal: SPACING.lg || 24,
     paddingTop: 20,
     paddingBottom: 28,
     borderBottomLeftRadius: 24,
@@ -215,16 +220,76 @@ const styles = StyleSheet.create({
   },
   headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 },
   menuAndGreeting: { flexDirection: 'row', alignItems: 'center' },
-  menuIcon: { fontSize: 36, fontWeight: 'bold', color: '#382109', marginRight: 20, paddingVertical: 6, paddingHorizontal: 4, lineHeight: 36 },
+  menuIcon: { fontSize: 36, fontWeight: 'bold', color: COLORS.primary || '#382109', marginRight: 20, paddingVertical: 6, paddingHorizontal: 4, lineHeight: 36 },
   greetingTextContainer: { justifyContent: 'center' },
-  greetingText: { fontSize: 22, fontWeight: '800', color: '#382109' },
-  dateText: { fontSize: 14, color: '#757575', fontWeight: '500', marginTop: 2 },
-  sectionTitleHeader: { fontSize: 16, fontWeight: '700', color: '#382109', marginBottom: 16 },
-  listingSection: { flex: 1, paddingHorizontal: 24, paddingTop: 24 },
+  greetingText: { fontSize: 22, fontWeight: '800', color: COLORS.primary || '#382109' },
+  dateText: { fontSize: 14, color: COLORS.textMuted || '#757575', fontWeight: '500', marginTop: 2 },
+  sectionTitleHeader: { fontSize: 16, fontWeight: '700', color: COLORS.primary || '#382109', marginBottom: 16 },
+  listingSection: { flex: 1, paddingHorizontal: SPACING.lg || 24, paddingTop: 24 },
   listingHeaderRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
-  sectionTitleBody: { fontSize: 18, fontWeight: '700', color: '#382109' },
-  placeholderListCard: { height: 120, backgroundColor: '#FFFFFF', borderRadius: 12, justifyContent: 'center', alignItems: 'center', borderStyle: 'dashed', borderWidth: 1, borderColor: '#BCC1C6' },
+  sectionTitleBody: { fontSize: 18, fontWeight: '700', color: COLORS.primary || '#382109' },
+  filterText: { color: COLORS.textMuted || '#6B7280', fontWeight: '600' },
   cardsSummary: { flexDirection: 'row' },
-  textContainer: { marginTop: 15, alignment: 'center' },
-  linkText: { color: '#2979FF', fontWeight: '600' }
+
+  // --- improviment) ---
+  emptyStateCard: {
+    backgroundColor: COLORS.white || '#FFFFFF',
+    borderRadius: 16,
+    padding: SPACING.lg || 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+    marginVertical: SPACING.sm || 8,
+  },
+  emptyStateIcon: {
+    fontSize: 40,
+    marginBottom: SPACING.xs || 8,
+  },
+  emptyStateTitle: {
+    fontSize: FONT_SIZES.md || 18,
+    fontWeight: '700',
+    color: COLORS.primary || '#382109',
+    marginBottom: 4,
+  },
+  emptyStateSubtext: {
+    fontSize: FONT_SIZES.sm || 14,
+    color: COLORS.textMuted || '#6B7280',
+    textAlign: 'center',
+    marginBottom: SPACING.md || 16,
+    paddingHorizontal: SPACING.sm || 8,
+  },
+  emptyStateButton: {
+    backgroundColor: COLORS.secondary || '#382109',
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    width: '100%',
+    alignItems: 'center',
+  },
+  emptyStateButtonText: {
+    color: COLORS.white || '#FFFFFF',
+    fontSize: FONT_SIZES.sm || 14,
+    fontWeight: '700',
+  },
+
+  // --- improviment---
+  primaryActionButton: {
+    backgroundColor: COLORS.secondary || '#468275',
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginTop: 16,
+  },
+  primaryActionButtonText: {
+    color: COLORS.white || '#FFFFFF',
+    fontSize: FONT_SIZES.sm || 14,
+    fontWeight: '700',
+  },
 });

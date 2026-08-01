@@ -80,7 +80,7 @@ export default function LoginScreen() {
           
           {/* Footer  */}
           <View style={styles.footerBranding}>
-            <Text style={styles.brandingText}>O'CALLAGHAN COLLECTION</Text>
+            <Text style={styles.brandingText}>MARIANO COLLECTION</Text>
           </View>
         </View>
 

@@ -16,7 +16,7 @@ import { fetchKitchenSummary } from '../../services/dinnerService';
 export default function KitchenScreen() {
   const { eventId } = useLocalSearchParams();
 
-  const [activeTab, setActiveTab] = useState('summary'); 
+  const [activeTab, setActiveTab] = useState('summary');
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [kitchenData, setKitchenData] = useState(null);
@@ -113,9 +113,9 @@ export default function KitchenScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
       {/* Top Bar with Back Button */}
-      <View style={styles.topBar}>
-        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-          <Text style={styles.backButtonText}>← Back</Text>
+      <View style={styles.headerRow}>
+        <TouchableOpacity onPress={() => router.back()} activeOpacity={0.7}>
+          <Text style={styles.backIcon}>←</Text>
         </TouchableOpacity>
       </View>
 
@@ -202,17 +202,17 @@ export default function KitchenScreen() {
 }
 
 const styles = StyleSheet.create({
-  safeArea: { 
-    flex: 1, 
-    backgroundColor: COLORS.backgroundLight 
+  safeArea: {
+    flex: 1,
+    backgroundColor: COLORS.backgroundLight
   },
-  loadingContainer: { 
-    flex: 1, 
-    justify: 'center', 
+  loadingContainer: {
+    flex: 1,
+    justify: 'center',
     alignItems: 'center',
     backgroundColor: COLORS.backgroundLight
   },
-  
+
   // Top Bar and Back Button
   topBar: {
     flexDirection: 'row',
@@ -240,15 +240,15 @@ const styles = StyleSheet.create({
     paddingTop: SPACING.sm,
     paddingBottom: SPACING.sm,
   },
-  eventTitle: { 
-    fontSize: FONT_SIZES.lg, 
-    fontWeight: '700', 
-    color: COLORS.textDark 
+  eventTitle: {
+    fontSize: FONT_SIZES.lg,
+    fontWeight: '700',
+    color: COLORS.textDark
   },
-  eventSubTitle: { 
-    fontSize: FONT_SIZES.sm - 2, 
-    color: COLORS.textMuted, 
-    marginTop: 2 
+  eventSubTitle: {
+    fontSize: FONT_SIZES.sm - 2,
+    color: COLORS.textMuted,
+    marginTop: 2
   },
 
   // Navigation Tabs
@@ -259,33 +259,33 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
     marginTop: SPACING.xs,
   },
-  tabItem: { 
-    flex: 1, 
-    paddingVertical: SPACING.sm + 4, 
-    alignItems: 'center' 
+  tabItem: {
+    flex: 1,
+    paddingVertical: SPACING.sm + 4,
+    alignItems: 'center'
   },
-  tabItemActive: { 
-    borderBottomWidth: 2, 
+  tabItemActive: {
+    borderBottomWidth: 2,
     borderBottomColor: COLORS.secondary
   },
-  tabText: { 
-    fontSize: FONT_SIZES.sm - 1, 
-    fontWeight: '600', 
-    color: COLORS.textMuted 
+  tabText: {
+    fontSize: FONT_SIZES.sm - 1,
+    fontWeight: '600',
+    color: COLORS.textMuted
   },
-  tabTextActive: { 
-    color: COLORS.secondary, 
-    fontWeight: '700' 
+  tabTextActive: {
+    color: COLORS.secondary,
+    fontWeight: '700'
   },
 
-  content: { 
-    flex: 1, 
-    paddingHorizontal: SPACING.md 
+  content: {
+    flex: 1,
+    paddingHorizontal: SPACING.md
   },
-  
+
   // Summary Styles (Chefs View)
-  summaryContainer: { 
-    paddingBottom: SPACING.lg 
+  summaryContainer: {
+    paddingBottom: SPACING.lg
   },
   tableHeader: {
     flexDirection: 'row',
@@ -294,18 +294,18 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#D1D5DB',
   },
-  tableHeaderColLeft: { 
-    fontSize: FONT_SIZES.sm - 2, 
-    fontWeight: '700', 
-    color: COLORS.textMuted 
+  tableHeaderColLeft: {
+    fontSize: FONT_SIZES.sm - 2,
+    fontWeight: '700',
+    color: COLORS.textMuted
   },
-  tableHeaderColRight: { 
-    fontSize: FONT_SIZES.sm - 2, 
-    fontWeight: '700', 
-    color: COLORS.textMuted 
+  tableHeaderColRight: {
+    fontSize: FONT_SIZES.sm - 2,
+    fontWeight: '700',
+    color: COLORS.textMuted
   },
-  sectionBlock: { 
-    marginTop: SPACING.sm + 4 
+  sectionBlock: {
+    marginTop: SPACING.sm + 4
   },
   sectionHeaderRow: {
     flexDirection: 'row',
@@ -316,15 +316,15 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     marginBottom: SPACING.xs,
   },
-  sectionTitle: { 
-    fontSize: FONT_SIZES.sm, 
-    fontWeight: '700', 
-    color: COLORS.textDark 
+  sectionTitle: {
+    fontSize: FONT_SIZES.sm,
+    fontWeight: '700',
+    color: COLORS.textDark
   },
-  sectionTotal: { 
-    fontSize: FONT_SIZES.sm, 
-    fontWeight: '700', 
-    color: COLORS.secondary 
+  sectionTotal: {
+    fontSize: FONT_SIZES.sm,
+    fontWeight: '700',
+    color: COLORS.secondary
   },
   summaryItemCard: {
     paddingVertical: SPACING.sm,
@@ -336,15 +336,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  itemName: { 
-    fontSize: FONT_SIZES.sm, 
-    color: COLORS.textDark, 
-    fontWeight: '500' 
+  itemName: {
+    fontSize: FONT_SIZES.sm,
+    color: COLORS.textDark,
+    fontWeight: '500'
   },
-  itemQuantity: { 
-    fontSize: FONT_SIZES.sm, 
-    fontWeight: '700', 
-    color: COLORS.textDark 
+  itemQuantity: {
+    fontSize: FONT_SIZES.sm,
+    fontWeight: '700',
+    color: COLORS.textDark
   },
   notesBox: {
     marginTop: SPACING.xs + 2,
@@ -353,16 +353,16 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     gap: 2,
   },
-  noteTag: { 
-    fontSize: FONT_SIZES.sm - 2, 
-    color: '#92400E', 
-    fontWeight: '600' 
+  noteTag: {
+    fontSize: FONT_SIZES.sm - 2,
+    color: '#92400E',
+    fontWeight: '600'
   },
 
   // By Table Styles 
-  byTableContainer: { 
-    paddingVertical: SPACING.sm + 4, 
-    gap: SPACING.sm + 4 
+  byTableContainer: {
+    paddingVertical: SPACING.sm + 4,
+    gap: SPACING.sm + 4
   },
   tableCard: {
     backgroundColor: COLORS.white,
@@ -381,34 +381,34 @@ const styles = StyleSheet.create({
     paddingBottom: SPACING.sm,
     marginBottom: SPACING.sm,
   },
-  tableCardTitle: { 
-    fontSize: FONT_SIZES.md, 
-    fontWeight: '700', 
-    color: COLORS.textDark 
+  tableCardTitle: {
+    fontSize: FONT_SIZES.md,
+    fontWeight: '700',
+    color: COLORS.textDark
   },
-  noOrdersBadge: { 
-    fontSize: FONT_SIZES.sm - 3, 
-    color: COLORS.textMuted, 
-    backgroundColor: '#F3F4F6', 
-    paddingHorizontal: SPACING.xs + 2, 
-    paddingVertical: 2, 
-    borderRadius: 4 
+  noOrdersBadge: {
+    fontSize: FONT_SIZES.sm - 3,
+    color: COLORS.textMuted,
+    backgroundColor: '#F3F4F6',
+    paddingHorizontal: SPACING.xs + 2,
+    paddingVertical: 2,
+    borderRadius: 4
   },
-  noOrdersText: { 
-    fontSize: FONT_SIZES.sm - 2, 
-    color: COLORS.textMuted, 
-    fontStyle: 'italic', 
-    marginVertical: SPACING.xs 
+  noOrdersText: {
+    fontSize: FONT_SIZES.sm - 2,
+    color: COLORS.textMuted,
+    fontStyle: 'italic',
+    marginVertical: SPACING.xs
   },
-  tableCoursesContainer: { 
-    gap: SPACING.sm + 2 
+  tableCoursesContainer: {
+    gap: SPACING.sm + 2
   },
   tableCourseGroup: {
     backgroundColor: COLORS.backgroundLight,
     padding: SPACING.sm,
     borderRadius: 6,
     borderLeftWidth: 3,
-    borderLeftColor: COLORS.secondary, 
+    borderLeftColor: COLORS.secondary,
   },
   courseBadgeTitle: {
     fontSize: FONT_SIZES.sm - 3,
@@ -417,22 +417,22 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     marginBottom: SPACING.xs,
   },
-  tableCourseItemRow: { 
-    marginVertical: 2 
+  tableCourseItemRow: {
+    marginVertical: 2
   },
-  tableCourseItemText: { 
-    fontSize: FONT_SIZES.sm - 1, 
-    color: COLORS.textDark 
+  tableCourseItemText: {
+    fontSize: FONT_SIZES.sm - 1,
+    color: COLORS.textDark
   },
-  boldQty: { 
-    fontWeight: '700', 
-    color: COLORS.primary 
+  boldQty: {
+    fontWeight: '700',
+    color: COLORS.primary
   },
-  tableItemNoteText: { 
-    fontSize: FONT_SIZES.sm - 3, 
-    color: COLORS.statusUpcoming, 
-    marginLeft: SPACING.sm + 4, 
-    fontStyle: 'italic' 
+  tableItemNoteText: {
+    fontSize: FONT_SIZES.sm - 3,
+    color: COLORS.statusUpcoming,
+    marginLeft: SPACING.sm + 4,
+    fontStyle: 'italic'
   },
 
   // Footer
@@ -446,11 +446,20 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#E5E5E5',
   },
-  footerText: { 
-    fontSize: FONT_SIZES.sm, 
-    color: COLORS.textMuted 
+  footerText: {
+    fontSize: FONT_SIZES.sm,
+    color: COLORS.textMuted
   },
-  refreshIcon: { 
-    fontSize: FONT_SIZES.sm 
+  refreshIcon: {
+    fontSize: FONT_SIZES.sm
+  },
+  headerRow: {
+    paddingHorizontal: SPACING.md,
+    paddingTop: SPACING.sm,
+  },
+  backIcon: {
+    fontSize: 38,
+    color: COLORS.textDark,
+    fontWeight: '600',
   },
 });
