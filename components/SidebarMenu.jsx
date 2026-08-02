@@ -93,9 +93,9 @@ export default function SidebarMenu({ visible, onClose, userRole }) {
                 </>
               )}
 
-              <TouchableOpacity style={styles.menuItem} onPress={onClose}>
+              {/* <TouchableOpacity style={styles.menuItem} onPress={onClose}>
                 <Text style={styles.menuItemText}>👤 Profile</Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
 
             {/* Sidebar Footer for logout */}

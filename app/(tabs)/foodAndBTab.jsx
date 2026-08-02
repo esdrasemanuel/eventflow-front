@@ -182,47 +182,47 @@ export default function FnBTab({ event, userId, userRole }) {
         </View>
       ) : null}
 
-      {/* Kitchen view Card */}
-      {userRole === 'ADMIN' && (
-        loadingDinner ? (
-          <ActivityIndicator size="small" color={COLORS.secondary} style={{ marginVertical: SPACING.sm }} />
-        ) : assignedDinnerData ? (
-          <View style={styles.kitchenCard}>
-            <View style={styles.kitchenCardHeader}>
-              <View style={styles.badgeRow}>
-                <Text style={styles.kitchenBadge}>👨‍🍳 Kitchen View</Text>
-                <View style={styles.liveIndicator}>
-                  <View style={styles.liveDot} />
-                  <Text style={styles.liveText}>Live</Text>
-                </View>
-              </View>
-
-              <Text style={styles.kitchenTitle}>
-                {assignedDinnerData.tables?.[0]?.dinner?.name || 'Kitchen'}
-              </Text>
-
-              <Text style={styles.kitchenSubtitle}>
-                Monitor orders and preparation summary
-              </Text>
-            </View>
-
-            <TouchableOpacity
-              style={styles.kitchenButton}
-              activeOpacity={0.8}
-              onPress={() =>
-                router.push({
-                  pathname: '/kitchenScreen',
-                  params: {
-                    eventId: eventId,
-                  },
-                })
-              }
-            >
-              <Text style={styles.kitchenButtonText}>Open Kitchen View</Text>
-            </TouchableOpacity>
+{/* Kitchen view Card */}
+{userRole === 'ADMIN' && (
+  loadingDinner ? (
+    <ActivityIndicator size="small" color={COLORS.secondary} style={{ marginVertical: SPACING.sm }} />
+  ) : (
+    <View style={styles.kitchenCard}>
+      <View style={styles.kitchenCardHeader}>
+        <View style={styles.badgeRow}>
+          <Text style={styles.kitchenBadge}>👨‍🍳 Kitchen View</Text>
+          <View style={styles.liveIndicator}>
+            <View style={styles.liveDot} />
+            <Text style={styles.liveText}>Live</Text>
           </View>
-        ) : null
-      )}
+        </View>
+
+        <Text style={styles.kitchenTitle}>
+          {assignedDinnerData?.tables?.[0]?.dinner?.name || event?.title || 'Kitchen'}
+        </Text>
+
+        <Text style={styles.kitchenSubtitle}>
+          Monitor orders and preparation summary
+        </Text>
+      </View>
+
+      <TouchableOpacity
+        style={styles.kitchenButton}
+        activeOpacity={0.8}
+        onPress={() =>
+          router.push({
+            pathname: '/kitchenScreen',
+            params: {
+              eventId: eventId,
+            },
+          })
+        }
+      >
+        <Text style={styles.kitchenButtonText}>Open Kitchen View</Text>
+      </TouchableOpacity>
+    </View>
+  )
+)}
 
       {fnbItems.length === 0 ? (
         <View style={styles.emptyContainer}>
